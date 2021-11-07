@@ -1,0 +1,22 @@
+version: "3.0"
+
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_USER: "host"
+      MYSQL_PASSWORD: "pass"
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - "3306:5000"
+    volumes:
+      - ./db:/var/lib/mysql
+      - ./billingdb.sql:/docker-entrypoint-initdb.d/billingdb.sql
+
+  web:
+    build: ./app 
+    volumes:
+      - ./app:/app
+    ports:
+      - "5000:5000"
+   
