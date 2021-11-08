@@ -4,13 +4,12 @@ app =Flask(__name__)
 
 @app.route('/') 
 def home():
-    return "hi",200
+    return ("hello webhook",200)
 
 @app.route('/', methods=['POST']) 
-def hello_world(): 
-    print("ive got something")
+def post_request(): 
     print(request.json) 
-    return ("this is webhook", 200, None)
+    return ("this is a request post from github webhook", 200, None)
 
 
 if __name__== '__main__': 

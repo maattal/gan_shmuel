@@ -7,4 +7,4 @@ i am trying to make another push5
 
 i change the url of the webhook to just host and port 
 
-
+Rebuild the docker on the server after the changes -> webhook works! [need to make a volume?]
