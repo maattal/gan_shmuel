@@ -19,11 +19,22 @@ def post_request():
 
 #--------------------BUILD OF THE CONTAINERS------------
 def build_fun(branch):
+    os.system("docker-compose down")
     if branch == 'staging':
-        os.system(f"docker-compose -f docker-composeStaging.yml --build")
+        os.system("git fetch")
+        os.system("git checkout staging")
+        os.system("git pull")
+        os.system("docker-compose -f billing/docker-compose.yml up")
+        os.system("docker-compose -f weight/docker-compose.yml up")
+#      os.system(f"docker-compose -f docker-composeStaging.yml --build")
         return ("working on staging auto diployment")
     elif branch == 'main':
-        os.system(f"docker-compose -f docker-composeMain.yml --build")
+        os.system("git fetch")
+        os.system("git checkout main")
+        os.system("git pull")
+        os.system("docker-compose -f billing/docker-compose.yml up")
+        os.system("docker-compose -f weight/docker-compose.yml up")
+        #os.system(f"docker-compose -f docker-composeMain.yml --build")
         return ("working on master auto diployment")
     else:
         return (f"on this {branch} no action!!")
