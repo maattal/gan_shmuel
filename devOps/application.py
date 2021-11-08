@@ -2,6 +2,9 @@ from flask import Flask,request
 # #https://github.com/maattal/gan_shmuel.git 
 app =Flask(__name__) 
 
+@app.route('/') 
+def home():
+    return "hi",200
 
 @app.route('/', methods=['POST']) 
 def hello_world(): 
