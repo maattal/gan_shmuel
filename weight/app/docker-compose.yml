@@ -1,33 +1,22 @@
-version: "3.7"
-
+version: "3.0"
 services:
   db:
-    image: mysql:8.0
+    image: mysql/mysql-server:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: "root"
-      MYSQL_USER: "root"
-      MYSQL_PASSWORD: "1234"
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306"
     volumes:
-      - ./create-db.sql:/docker-entrypoint-initdb.d/create-db.sql
-      - weight:/var/lib/mysql
-    networks:
-      - backend
-  
+      - ./one-db.sql:/docker-entrypoint-initdb.d/one-db.sql
+      - wdata:/var/lib/mysql/:rw
+      
   web:
     build: .
     volumes:
-      - .:/app/
-    ports: 
-      - "8080:5000"
-    networks:
-      - backend
-      - frontend
-  
+      - .:/app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
 volumes:
-  weight:
-  
-networks:
-  frontend:
-  backend:
-      
-    
+  wdata:

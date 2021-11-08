@@ -1,7 +1,10 @@
 from flask import Flask
 from flask_restful import Api, Resource
-import mysql.connector
+import mysql.connector 
 from flask import request,Response
+from flask import jsonify
+import os,sys,json
+from datetime import datetime
 
 app = Flask(__name__)
 api = Api(app)  
@@ -9,24 +12,24 @@ api = Api(app)
 def init():
     return mysql.connector.connect(
         host='db',
-        database='weight',
+        database='db',
         user='root',
         password='root'
     )
 
-class Health(Resource):
-    def get(self):
-        try:
-            init()
-            return "ok",200
-        except:
-            return "internal server error",500
-api.add_resource(Health,"/health")
+@app.route("/health", methods=["GET"])
+def health():
+    return "ok"
 
+@app.route("/", methods=["GET"])
+def get():
+    connect = init()
+    cur = connect.cursor()
+    cur.execute("SHOW TABLES;")
+    rows = cur.fetchall()
+    resp = jsonify(rows)
+    resp.status_code = 200
+    return resp
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
-
-# @app.route("/health", methods=["GET"])
-# def func1():
-#     return "ok"
