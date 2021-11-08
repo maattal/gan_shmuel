@@ -21,3 +21,4 @@ commit your files git commit -m "message" <commit>
 set your remote origin git remote add origin git@github.com:maattal/gan_shmuel.git
 set your remote branch git push --set-upstream origin <branch>
 push your files to the remote git push
+^^
