@@ -10,13 +10,12 @@ def home():
 @app.route('/', methods=['POST']) 
 def post_request(): 
     json_str=request.json
-    #branch=list(json_str['ref'].split("/"))
-    #commiter=json_str['pusher']['name']
-    commiter="bla"
-    branch="blabla"
+    branch=list(json_str['ref'].split("/"))
+    commiter=json_str['pusher']['name']
     print(branch[2])
     print(commiter)
-    return ("this is a request from {commiter}, from the branch {branch}", 200, None)
+    return_string=f"this is a request from {commiter}, from the branch {branch}"
+    return (return_string, 200, None)
 
 
 if __name__== '__main__': 
