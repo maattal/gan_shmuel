@@ -14,7 +14,7 @@ def post_request():
     commiter=json_str['pusher']['name']
     print(branch[2])
     print(commiter)
-    return ("this is a request post from github webhook", 200, None)
+    return ("this is a request from {commiter}, from the branch {branch}", 200, None)
 
 
 if __name__== '__main__': 
