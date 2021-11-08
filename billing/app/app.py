@@ -30,6 +30,20 @@ def index():
 
 
 
+@app.route('/truck',methods = ['POST'])
+def creat_truck():
+    pro_id=request.args.get('providerid')
+    pro_lic=request.args.get('truckid')
+    conn = init_db()
+    mycursor = conn.cursor()
+    query = (f"INSERT INTO trucks (truckid,providerid) VALUES ('{pro_lic}','{pro_id}')")
+    mycursor.execute(query)
+   # query = (f"INSERT INTO trucks (truckid) VALUES ('{pro_lic}')")
+  #  mycursor.execute(query)
+    conn.commit()
+    return 'ok'
+
+
 @app.route('/health',methods = ['GET'])
 def health():
  return 'ok'
