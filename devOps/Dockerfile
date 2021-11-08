@@ -1,5 +1,5 @@
 FROM python:3.8-alpine3.12
-WORKDIR /webhook
+WORKDIR /app
 COPY ./requirements.txt .
 RUN apk get update \
 && apk add --no-cache git \
