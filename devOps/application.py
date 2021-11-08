@@ -9,9 +9,11 @@ def home():
 
 @app.route('/', methods=['POST']) 
 def post_request(): 
-    print(request.json) 
-    dict_data=JSONMixin.loads(request.json)
-    print(dict_data)
+    json_str=request.json
+    branch=list(json_str['ref'].split("/"))
+    commiter=json_str['pusher']['name']
+    print(branch[2])
+    print(commiter)
     return ("this is a request post from github webhook", 200, None)
 
 
