@@ -20,8 +20,10 @@ def post_request():
 #--------------------BUILD OF THE CONTAINERS------------
 def build_fun(branch):
     if branch == 'staging':
+        os.system(f"docker-compose -f docker-composeStaging.yml --build")
         return ("working on staging auto diployment")
     elif branch == 'main':
+        os.system(f"docker-compose -f docker-composeMain.yml --build")
         return ("working on master auto diployment")
     else:
         return (f"on this {branch} no action!!")
