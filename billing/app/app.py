@@ -28,6 +28,13 @@ def index():
     return resp
     # connect.close()
 
+# @app.route('/provider/<pro_name>',methods = ['POST'])
+# def creat_provider(pro_name):
+#     conn = init_db()
+#     mycursor = conn.cursor()
+#     mycursor.execute("INSERT INTO 'Provider' ('name') VALUES (%s)")
+#     return "ok" 
+
 
 @app.route('/health',methods = ['GET'])
 def health():

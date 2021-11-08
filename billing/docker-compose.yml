@@ -8,8 +8,11 @@ services:
     ports:
       - "3306"
     volumes:
-      - ./db:/var/lib/mysql
+      # - ./db:/var/lib/mysql
       - ./one-db.sql:/docker-entrypoint-initdb.d/one-db.sql
+      - wdata:/var/lib/mysql/:rw
+      # - ${TEAM_PATH}:/weight
+
 
   web:
     build: ./app 
@@ -20,3 +23,5 @@ services:
     depends_on:
       - db
    
+volumes:
+  wdata:      
