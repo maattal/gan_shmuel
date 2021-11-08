@@ -1,21 +1,3 @@
--- Skip to content
- 
--- Search or jump to…
-
--- Pull requests
--- Issues
--- Marketplace
--- Explore
- 
--- @saarice 
--- 5
--- 0 3 argamanza/gan-shmuel
---  Code  Issues 0  Pull requests 1  Projects 1  Wiki  Security  Insights
--- gan-shmuel/docker/db/db_create.sql
--- @argamanza argamanza change whole structure to act as CI Server
--- 9774e22 on Apr 18
--- 118 lines (89 sloc)  4.3 KB
-  
 CREATE DATABASE  IF NOT EXISTS `db` /* Blue's db! */;
 USE `db`;
 -- MySQL dump 10.13  Distrib 5.7.25, for Linux (x86_64)
@@ -129,20 +111,4 @@ INSERT INTO sessions (direction, f, date, bruto, neto, trucks_id, products_id) V
 
 
 
-
-
-
-
--- © 2019 GitHub, Inc.
--- Terms
--- Privacy
--- Security
--- Status
--- Help
--- Contact GitHub
--- Pricing
--- API
--- Training
--- Blog
--- About
 
