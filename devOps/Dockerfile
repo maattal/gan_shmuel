@@ -7,6 +7,5 @@ RUN apk get update \
 && apk add docker-compose 
 RUN pip install -r requirements.txt
 WORKDIR ./devOps
-COPY ./application.py .
 ENTRYPOINT [ "python3" ]
 CMD ["application.py"] 
