@@ -1,7 +1,10 @@
 from flask import Flask
 from flask_restful import Api, Resource
-import mysql.connector
+import mysql.connector 
 from flask import request,Response
+
+from flask import jsonify
+import os,sys,json
 from datetime import datetime
 
 
@@ -11,32 +14,25 @@ api = Api(app)
 def init():
     return mysql.connector.connect(
         host='db',
-        database='weight',
+        database='db',
         user='root',
         password='root'
     )
 
-class Health(Resource):
-    def get(self):
-        try:
-            init()
-            return "ok",200
-        except:
-            return "internal server error",500
-api.add_resource(Health,"/health")
+@app.route("/health", methods=["GET"])
+def health():
+    return "ok"
 
+@app.route("/", methods=["GET"])
+def get():
+    connect = init()
+    cur = connect.cursor()
+    cur.execute("SHOW TABLES;")
+    rows = cur.fetchall()
+    resp = jsonify(rows)
+    resp.status_code = 200
+    return resp
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
 
-# @app.route("/health", methods=["GET"])
-# def func1():
-#     return "ok"
-
-date_string = "20190625091115"
-t1,t2 = datetime.strptime(date_string, '%Y%m%d%H%M%S')
-my_list = ['in','out','none']
-my_string = ','.join(my_list) 
-
-
-print(t1,t2) 
