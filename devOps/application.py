@@ -4,9 +4,10 @@ app =Flask(__name__)
 
 print("blablabla")
 
-@app.route('/', methods=['POST']) 
+@app.route('/github-webhook/', methods=['POST']) 
 def hello_world(): 
-    print("iv got a request") 
-    return 200
-
+    print("ive got something")
+    print(request.json) 
+    return 200 
+    
 if __name__== '__main__': app.run(host="0.0.0.0",debug=True) 
