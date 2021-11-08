@@ -2,6 +2,8 @@ from flask import Flask
 from flask_restful import Api, Resource
 import mysql.connector
 from flask import request,Response
+from datetime import datetime
+
 
 app = Flask(__name__)
 api = Api(app)  
@@ -30,3 +32,11 @@ if __name__ == "__main__":
 # @app.route("/health", methods=["GET"])
 # def func1():
 #     return "ok"
+
+date_string = "20190625091115"
+t1,t2 = datetime.strptime(date_string, '%Y%m%d%H%M%S')
+my_list = ['in','out','none']
+my_string = ','.join(my_list) 
+
+
+print(t1,t2) 

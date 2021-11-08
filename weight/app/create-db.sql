@@ -1,4 +1,4 @@
-CREATE DATABASE IF NOT EXISTS `weight`;
+CREATE DATABASE IF NOT EXISTS "weight";
 --
 -- Host: 0.0.0.0 Database: Weight
 --

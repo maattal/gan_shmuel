@@ -9,7 +9,7 @@ services:
       MYSQL_PASSWORD: "1234"
     volumes:
       - ./create-db.sql:/docker-entrypoint-initdb.d/create-db.sql
-      - weight:/var/lib/mysql
+      - $PWD:weight:/var/lib/mysql
     networks:
       - backend
   
