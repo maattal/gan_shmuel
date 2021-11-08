@@ -3,7 +3,7 @@ WORKDIR /app/
 COPY requirements.txt .
 
 RUN python -m pip install --upgrade pip
-RUN pip install flask flask-restful mysql-connector-python
+RUN pip install -r requirements.txt
 
 COPY app.py .
 EXPOSE 5000
