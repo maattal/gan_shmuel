@@ -1,6 +1,6 @@
-# from flask import Flask,request
+from flask import Flask,request
 # #https://github.com/maattal/gan_shmuel.git 
-# app =Flask(__name__) 
+app =Flask(__name__) 
 
 print("blablabla")
 
