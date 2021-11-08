@@ -4,7 +4,7 @@ app =Flask(__name__)
 
 print("blablabla")
 
-@app.route('', methods=['POST']) 
+@app.route('/', methods=['POST']) 
 def hello_world(): 
     print("ive got something")
     print(request.json) 
