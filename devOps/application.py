@@ -13,18 +13,18 @@ def post_request():
     json_str=request.json
     branch=list(json_str['ref'].split("/"))[2]
     commiter=json_str['pusher']['name']
-    return_string=f"this is a request from {commiter}, from the branch {branch}"
-    build_fun(branch)
+    # return_string=f"this is a request from {commiter}, from the branch {branch}"
+    return_string=build_fun(branch)
     return (return_string, 200, None)
 
 #--------------------BUILD OF THE CONTAINERS------------
 def build_fun(branch):
     if branch == 'staging':
-        print("working on staging auto diployment")
+        return ("working on staging auto diployment")
     elif branch == 'main':
-        print("working on master auto diployment")
+        return ("working on master auto diployment")
     else:
-        print(f"on this {branch} no action!!")
+        return (f"on this {branch} no action!!")
 
 
 if __name__== '__main__': 
