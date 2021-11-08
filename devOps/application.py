@@ -2,7 +2,6 @@ from flask import Flask,request
 # #https://github.com/maattal/gan_shmuel.git 
 app =Flask(__name__) 
 
-print("blablabla")
 
 @app.route('/', methods=['POST']) 
 def hello_world(): 
