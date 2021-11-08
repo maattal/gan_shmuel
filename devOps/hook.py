@@ -6,4 +6,3 @@ def build_fun(branch):
         print("working on master auto diployment")
     else:
         print(f"on this {branch} no action!!")
-
