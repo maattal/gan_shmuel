@@ -31,7 +31,7 @@ CREATE TABLE `products` (
 DROP TABLE IF EXISTS `providers`;
 CREATE TABLE `providers` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `providername` varchar(45) DEFAULT NULL,
+  `providername` varchar(45) DEFAULT NULL UNIQUE,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -45,7 +45,9 @@ CREATE TABLE `trucks` (
   `weight` float DEFAULT NULL,
   `unit` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
+  KEY 'pr_ps' ('providerid')
+  CONSTRAINT 'FK_TI' FOREIGN KEY ('providername') REFERENCES 'providers' ('id'),
+  UNIQUE KEY `id_UNIQUE` (`id`),
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
