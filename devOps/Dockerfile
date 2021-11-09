@@ -1,10 +1,10 @@
-FROM python:3.8-alpine3.12
+FROM python:3.8
 WORKDIR /app
 COPY ./requirements.txt .
-RUN apk get update \
-&& apk add --no-cache git \
-&& apk add --no-cache docker \
-&& apk add docker-compose 
+RUN apt update \
+&& apt install -y git \
+&& apt install -y docker \
+&& apt install -y docker-compose 
 RUN pip install -r requirements.txt
 WORKDIR ./devOps
 ENTRYPOINT [ "python3" ]
