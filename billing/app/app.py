@@ -8,7 +8,6 @@ from openpyxl import  load_workbook
 
 app = Flask(__name__)
 
-app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 # db contenction
 def init_db():
     return mysql.connector.connect(
