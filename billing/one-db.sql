@@ -20,7 +20,7 @@ CREATE TABLE `containers` (
 DROP TABLE IF EXISTS `products`;
 CREATE TABLE `products` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `product_name` varchar(45) NOT NULL,
+  `product_name` varchar(45) NOT NULL UNIQUE,
   `rate` int(11) NOT NULL,
   `scope` varchar(45) NOT NULL DEFAULT 'ALL',
   PRIMARY KEY (`id`),
@@ -91,10 +91,10 @@ INSERT INTO containers (id,weight,unit) VALUES ('K-7845',999,'lbs');
 INSERT INTO products (product_name,rate,scope) VALUES ('Blood',122,'ALL');
 INSERT INTO products (product_name,rate,scope) VALUES ('Mandarin',103,'ALL');
 INSERT INTO products (product_name,rate,scope) VALUES ('Navel',97,'ALL');
-INSERT INTO products (product_name,rate,scope) VALUES ('Blood',102,'1');
+-- INSERT INTO products (product_name,rate,scope) VALUES ('Blood',102,'1');
 INSERT INTO products (product_name,rate,scope) VALUES ('Clementine',100,'ALL');
 INSERT INTO products (product_name,rate,scope) VALUES ('Tangerine',80,'ALL');
-INSERT INTO products (product_name,rate,scope) VALUES ('Clementine',90,'2');
+-- INSERT INTO products (product_name,rate,scope) VALUES ('Clementine',90,'2');
 
 INSERT INTO trucks (truckid,providerid,weight,unit) VALUES ('77777',2,666,'lbs');
 INSERT INTO trucks (truckid,providerid,weight,unit) VALUES ('66666',2,120,'kg');
