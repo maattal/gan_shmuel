@@ -5,7 +5,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 # db contenction
 def init_db():
     return mysql.connector.connect(
@@ -57,7 +57,7 @@ def creat_provider():
     except:
         return "Name already exists"    
     else:
-        mycursor.execute(f"SELECT id FROM providers WHERE providername = '{pro_name}';")
+        mycursor.execute(f"SELECT * FROM providers WHERE providername = '{pro_name}';")
         rows = mycursor.fetchmany(size=1)
         resp = jsonify(rows)
         resp.status_code = 200
