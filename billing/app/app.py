@@ -8,7 +8,6 @@ from openpyxl import  load_workbook
 
 app = Flask(__name__)
 
-app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 # db contenction
 def init_db():
     return mysql.connector.connect(
@@ -108,29 +107,20 @@ def upload_xl_data():
     return "a"
 
 
-
-@app.route('/provider',methods = ['POST'])
-def creat_provider():
-    pro_name=request.args.get('name')
-    conn = init_db()
-    mycursor = conn.cursor()
-    query = (f"INSERT INTO providers (providername) VALUES ('{pro_name}')")
-    mycursor.execute(query)
-    conn.commit()
-
-    return "ok" 
-
 @app.route('/truck/<id>',methods = ['PUT'])
-def put_truck_id():
- return 'ok'
-
-
+def update_truckprovider(id):
+    try:
+        new_id = request.args.get('providerid')
+        conn = init_db()
+        mycursor = conn.cursor()
+        query = (f"UPDATE trucks SET providerid = '{new_id}' WHERE id = '{id}'")
+        mycursor.execute(query)
+        conn.commit()
+        return "OK"
+    except:
+        return "Invalid input"
+ 
+    
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0",debug = False)
-
-
-
-
-
-    
