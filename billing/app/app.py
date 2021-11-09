@@ -1,12 +1,16 @@
-from flask import Flask,request, jsonify
+from flask import Flask,request, jsonify , send_from_directory ,send_file
 import os,sys,json
 import mysql.connector
 from datetime import datetime
 from openpyxl import  load_workbook
+import openpyxl as xl
 
 
 
 app = Flask(__name__)
+upload_folder = 'in/'
+xlfile='rates.xlsx'
+
 
 # db contenction
 def init_db():
@@ -87,15 +91,15 @@ def health():
 
 @app.route("/rates", methods=['POST'])
 def upload_xl_data():
-    filename="in/"+request.args.get('filename')
-
+    filename=upload_folder+request.args.get('filename')
+    global xlfile
+    xlfile = request.args.get('filename')
     connect = init_db()  
     cur = connect.cursor()  
     book = load_workbook(filename)
     sheet = book.active
-
     query = """REPLACE INTO products (product_name, rate, scope) VALUES (%s , %s, %s)"""
-
+    
     for r in sheet.iter_rows(2, sheet.max_row):
         product_id = r[0].value
         rate = r[1].value
@@ -105,6 +109,12 @@ def upload_xl_data():
 
     connect.commit()
     return "a"
+
+
+@app.route("/rates",methods=['GET'])
+def download_file():
+   return send_from_directory(upload_folder, xlfile,as_attachment=True)
+
 
 
 @app.route('/truck/<id>',methods = ['PUT'])
@@ -120,7 +130,11 @@ def update_truckprovider(id):
     except:
         return "Invalid input"
  
+@app.route('/bill/<id>',methods = ['GET'])
+def show_bill():
     
+    return
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0",debug = False)
