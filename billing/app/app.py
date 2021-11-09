@@ -40,9 +40,11 @@ def health():
 
 @app.route("/rates", methods=['POST'])
 def upload_xl_data():
+    filename="in/"+request.args.get('filename')
+
     connect = init_db()  
     cur = connect.cursor()  
-    book = load_workbook("in/rates.xlsx")
+    book = load_workbook(filename)
     sheet = book.active
 
     query = """REPLACE INTO products (product_name, rate, scope) VALUES (%s , %s, %s)"""
