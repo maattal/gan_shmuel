@@ -1,15 +1,23 @@
-version: "3.3"
-services: 
+version: "3.0"
+services:
   db:
-    image: mysql:8
-    volumes:
-     - "db:/var/lib/mysql"
+    image: mysql/mysql-server:8.0
     environment:
-     - MYSQL_ROOT_PASSWORD=1
-    ports:     
-      # <Port exposed> : < MySQL Port running inside container>
-     - 3306:3306
-# Names our volume
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306"
+    volumes:
+      - ./one-db.sql:/docker-entrypoint-initdb.d/one-db.sql
+      - wdata:/var/lib/mysql/:rw
+
+  web:
+    build: ./app
+    volumes:
+      - ./app:/app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+
 volumes:
-  db:
-  
+  wdata:
