@@ -63,20 +63,83 @@ def upload_xl_data():
 
 @app.route('/provider',methods = ['POST'])
 def creat_provider():
-    pro_name=request.args.get('name')
-    conn = init_db()
-    mycursor = conn.cursor()
-    query = (f"INSERT INTO providers (providername) VALUES ('{pro_name}')")
-    mycursor.execute(query)
-    conn.commit()
+    try:
+        pro_name=request.args.get('name')
+        conn = init_db()
+        mycursor = conn.cursor()
+        query = (f"INSERT INTO providers (providername) VALUES ('{pro_name}')")
+        mycursor.execute(query)
+        conn.commit()
+    except:
+        return "Name already exists"
+    else:
+        mycursor.execute(f"SELECT * FROM providers WHERE providername = '{pro_name}';")
+        rows = mycursor.fetchmany(size=1)
+        resp = jsonify(rows)
+        resp.status_code = 200
+        return resp
 
-    return "ok" 
-
+@app.route('/truck',methods = ['POST'])
+def creat_truck():
+    try:
+        pro_id=request.args.get('providerid')
+        pro_lic=request.args.get('truckid')
+        conn = init_db()
+        mycursor = conn.cursor()
+        query = (f"INSERT INTO trucks (truckid,providerid) VALUES ('{pro_lic}','{pro_id}')")
+        mycursor.execute(query)
+        conn.commit()
+        return 'ok'
+    except:
+        return "ProviderID not Found"
 @app.route('/truck/<id>',methods = ['PUT'])
 def put_truck_id():
  return 'ok'
 
 
+
+@app.route('/truck/<id>', methods=['GET'])
+def itemId(id):
+    now = datetime.now()
+    time = now.strftime("%Y%m")
+    test_id = id
+    _from = request.args.get('from')
+    _to = request.args.get('to')
+    if not _to:
+        _to = now.strftime("%Y%m%d%H%M%S")
+        # _to=11111111111111
+    if not _from:
+        _from = time + '01000000'
+        # _from=88888888888888
+    conn = init_db()
+    cursor = conn.cursor()
+    # ty:
+    int_id=int(id)
+    query=f"SELECT DISTINCT neto FROM sessions WHERE date=(SELECT MAX(date) FROM sessions WHERE trucks_id={int_id});"
+    cursor.execute(query) 
+    netoCursor = cursor.fetchall()
+    query_sessions=f"SELECT id FROM sessions WHERE trucks_id={int_id} AND date BETWEEN {_from} AND {_to};"
+    cursor.execute(query_sessions) 
+    rows=[] 
+    rows = cursor.fetchall()
+    session={
+    "id":0,
+    "tara":0,
+    }
+    if not rows:
+        session["id"] = 404,
+        session["tara"] = 'N/A' 
+    else:
+        session = { 
+        "id":int(test_id),
+        "tara":netoCursor[0],
+        "sessions":[]
+        }  
+        for i in range(0, len(rows)):
+             session["sessions"].append(rows[i]["id"])
+    resp = jsonify(session)
+    resp.status_code = 200
+    return resp
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0",debug = False)
