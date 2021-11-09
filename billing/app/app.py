@@ -32,7 +32,7 @@ def index():
 
 @app.route('/health',methods = ['GET'])
 def health():
- return 'ok' StatusCode(200)
+ return 'ok' ,200
 
 
 
