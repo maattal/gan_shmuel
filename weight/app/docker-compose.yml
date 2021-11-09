@@ -9,6 +9,7 @@ services:
     volumes:
       - ./one-db.sql:/docker-entrypoint-initdb.d/one-db.sql
       - wdata:/var/lib/mysql/:rw
+
       
   web:
     build: .
@@ -18,5 +19,6 @@ services:
       - "5000:5000"
     depends_on:
       - db
+
 volumes:
   wdata:
