@@ -18,26 +18,26 @@ def post_request():
     return (return_string, 200, None)
 
 #--------------------BUILD OF THE CONTAINERS------------
+
+#
+def git_FetchCheckoutPullDirDown_Up(branch):
+        os.system("git fetch")
+        os.system(f"git checkout {branch}")
+        os.system("git pull")
+        os.chdir("/app")
+        os.system("docker-compose -f billing/docker-compose.yml down")
+        os.system("docker-compose -f weight/docker-compose.yml down")
+        os.system("docker-compose -f billing/docker-compose.yml up")
+        os.system("docker-compose -f weight/docker-compose.yml up")
+
 def build_fun(branch):
     os.system("docker-compose down")
     if branch == 'staging':
-        os.system("git fetch")
-        os.system("git checkout staging")
-        os.system("git pull")
-        os.chdir("/app")
-        os.system("docker-compose -f billing/docker-compose.yml up")
-        os.system("docker-compose -f weight/docker-compose.yml up")
-#      os.system(f"docker-compose -f docker-composeStaging.yml --build")
-        return ("working on staging auto diployment")
+        git_FetchCheckoutPullDirDown_Up(branch)
+        return (f"working on {branch}aging auto diployment")
     elif branch == 'main':
-        os.system("git fetch")
-        os.system("git checkout main")
-        os.system("git pull")
-        os.chdir("/app")
-        os.system("docker-compose -f /billing/docker-compose.yml up")
-        os.system("docker-compose -f /weight/docker-compose.yml up")
-        #os.system(f"docker-compose -f docker-composeMain.yml --build")
-        return ("working on master auto diployment")
+        git_FetchCheckoutPullDirDown_Up(branch)
+        return (f"working on {branch} auto diployment")
     else:
         return (f"on this {branch} no action!!")
 
