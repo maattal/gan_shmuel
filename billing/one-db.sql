@@ -45,11 +45,9 @@ CREATE TABLE `trucks` (
   `weight` float DEFAULT NULL,
   `unit` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY 'pr_ps' ('providerid')
-  CONSTRAINT 'FK_TI' FOREIGN KEY ('providername') REFERENCES 'providers' ('id'),
-  UNIQUE KEY `id_UNIQUE` (`id`),
+  FOREIGN KEY (providerid) REFERENCES providers(id),
+  UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 DROP TABLE IF EXISTS `sessions`;
 CREATE TABLE `sessions` (
