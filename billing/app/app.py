@@ -35,16 +35,16 @@ def health():
     else:
         return "WELCOME DATA CONNECTION WORKS" ,200
 
-@app.route('/',methods = ['GET'])
-def index():
+#@app.route('/',methods = ['GET'])
+#def index():
     # return 'ko'
-    connect = init_db()  
-    cur = connect.cursor()  
-    cur.execute("SHOW TABLES;")
-    rows = cur.fetchall()
-    resp = jsonify(rows)
-    resp.status_code = 200
-    return resp
+  #  connect = init_db()  
+   # cur = connect.cursor()  
+  #  cur.execute("SHOW TABLES;")
+  #  rows = cur.fetchall()
+  #  resp = jsonify(rows)
+  #  resp.status_code = 200
+  #  return resp
     # connect.close()
 
 
