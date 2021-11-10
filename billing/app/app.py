@@ -121,6 +121,7 @@ def upload_xl_data():
 
 
 
+<<<<<<< HEAD
 
 @app.route('/truck/<id>', methods=['GET'])
 def itemId(id):
@@ -166,6 +167,20 @@ def itemId(id):
     return resp
 
 
+=======
+@app.route('/truck/<id>',methods = ['PUT'])
+def update_truckprovider(id):
+    try:
+        new_id = request.args.get('providerid')
+        conn = init_db()
+        mycursor = conn.cursor()
+        query = (f"UPDATE trucks SET providerid = '{new_id}' WHERE id = '{id}'")
+        mycursor.execute(query)
+        conn.commit()
+        return "OK"
+    except:
+        return "Invalid input"
+>>>>>>> mike
 
 
 
