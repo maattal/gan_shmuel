@@ -31,7 +31,7 @@ def send_email():
     body = "hi, report from your CI server"
     filename = "report.html"
 
-    yag = yagmail.SMTP("blueteamdevleap2021@gmail.com")
+    yag = yagmail.SMTP("blueteamdevleap2021@gmail.com","Asaad2021!")
     yag.send(
         to=receiver,
         subject="CI test with html report",
