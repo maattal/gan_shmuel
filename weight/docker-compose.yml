@@ -1,4 +1,4 @@
-version: "3.0"
+version: "3"
 services:
   db:
     image: mysql/mysql-server:8.0
@@ -12,17 +12,17 @@ services:
 
   web:
     build: ./app
-    # volumes:
-    #   - ./app:/app
     ports:
       - "8082:5000"
     depends_on:
       - db
-    hostname: localweight
+    container_name: localweight
     networks:
-      - blue_net
+      - billing_blue_net
+
 
 volumes:
   wdata:
 networks:
-  blue_net:
+  billing_blue_net:
+     external: true
