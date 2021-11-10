@@ -1,12 +1,16 @@
-from flask import Flask,request, jsonify
+from flask import Flask,request, jsonify , send_from_directory ,send_file
 import os,sys,json
 import mysql.connector
 from datetime import datetime
 from openpyxl import  load_workbook
+import openpyxl as xl
+
 
 
 
 app = Flask(__name__)
+upload_folder = 'in/'
+xlfile='rates.xlsx'
 
 # db contenction
 def init_db():
@@ -81,25 +85,13 @@ def creat_provider():
 
 
 
-@app.route('/truck',methods = ['POST'])
-def creat_truck():
-    try:
-        pro_id=request.args.get('providerid')
-        pro_lic=request.args.get('truckid')
-        conn = init_db()
-        mycursor = conn.cursor()
-        query = (f"INSERT INTO trucks (truckid,providerid) VALUES ('{pro_lic}','{pro_id}')")
-        mycursor.execute(query)
-        conn.commit()
-        return 'ok'
-    except:
-        return "ProviderID not Found"
 
 
 @app.route("/rates", methods=['POST'])
 def upload_xl_data():
-    filename="in/"+request.args.get('filename')
-
+    filename=upload_folder+request.args.get('filename')
+    global xlfile
+    xlfile = request.args.get('filename')
     connect = init_db()  
     cur = connect.cursor()  
     book = load_workbook(filename)
@@ -118,10 +110,25 @@ def upload_xl_data():
     return "a"
 
 
+@app.route("/rates",methods=['GET'])
+def download_file():
+   return send_from_directory(upload_folder, xlfile,as_attachment=True)
 
 
+@app.route('/truck',methods = ['POST'])
+def creat_truck():
+    try:
+        pro_id=request.args.get('providerid')
+        pro_lic=request.args.get('truckid')
+        conn = init_db()
+        mycursor = conn.cursor()
+        query = (f"INSERT INTO trucks (truckid,providerid) VALUES ('{pro_lic}','{pro_id}')")
+        mycursor.execute(query)
+        conn.commit()
+        return 'ok'
+    except:
+        return "ProviderID not Found"
 
-<<<<<<< HEAD
 
 @app.route('/truck/<id>', methods=['GET'])
 def itemId(id):
@@ -167,7 +174,6 @@ def itemId(id):
     return resp
 
 
-=======
 @app.route('/truck/<id>',methods = ['PUT'])
 def update_truckprovider(id):
     try:
@@ -180,7 +186,6 @@ def update_truckprovider(id):
         return "OK"
     except:
         return "Invalid input"
->>>>>>> mike
 
 
 
