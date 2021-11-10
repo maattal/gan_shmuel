@@ -7,10 +7,10 @@ import openpyxl as xl
 
 
 
+
 app = Flask(__name__)
 upload_folder = 'in/'
 xlfile='rates.xlsx'
-
 
 # db contenction
 def init_db():
@@ -21,6 +21,19 @@ def init_db():
         password='root'
     )
 
+
+
+@app.route('/health',methods = ['GET'])
+def health():
+    try:
+        connect = init_db()  
+        # mycursor = connect.cursor()  
+        # mycursor.execute("show tables")
+        # res = str(mycursor.fetchall())
+    except:
+        return "failed connecting to the database", 500
+    else:
+        return "WELCOME DATA CONNECTION WORKS" ,200
 
 @app.route('/',methods = ['GET'])
 def index():
@@ -69,6 +82,9 @@ def creat_provider():
         resp.status_code = 200
         return resp
 
+
+
+
 @app.route('/truck',methods = ['POST'])
 def creat_truck():
     try:
@@ -84,11 +100,6 @@ def creat_truck():
         return "ProviderID not Found"
 
 
-@app.route('/health',methods = ['GET'])
-def health():
- return 'ok' ,200
-
-
 @app.route("/rates", methods=['POST'])
 def upload_xl_data():
     filename=upload_folder+request.args.get('filename')
@@ -98,8 +109,9 @@ def upload_xl_data():
     cur = connect.cursor()  
     book = load_workbook(filename)
     sheet = book.active
+
     query = """REPLACE INTO products (product_name, rate, scope) VALUES (%s , %s, %s)"""
-    
+
     for r in sheet.iter_rows(2, sheet.max_row):
         product_id = r[0].value
         rate = r[1].value
@@ -115,6 +127,51 @@ def upload_xl_data():
 def download_file():
    return send_from_directory(upload_folder, xlfile,as_attachment=True)
 
+
+
+
+@app.route('/truck/<id>', methods=['GET'])
+def itemId(id):
+    now = datetime.now()
+    time = now.strftime("%Y%m")
+    test_id = id
+    _from = request.args.get('from')
+    _to = request.args.get('to')
+    if not _to:
+        _to = now.strftime("%Y%m%d%H%M%S")
+        # _to=11111111111111
+    if not _from:
+        _from = time + '01000000'
+        # _from=88888888888888
+    conn = init_db()
+    cursor = conn.cursor()
+    # ty:
+    int_id=int(id)
+    query=f"SELECT DISTINCT neto FROM sessions WHERE date=(SELECT MAX(date) FROM sessions WHERE trucks_id={int_id});"
+    cursor.execute(query) 
+    netoCursor = cursor.fetchall()
+    query_sessions=f"SELECT id FROM sessions WHERE trucks_id={int_id} AND date BETWEEN {_from} AND {_to};"
+    cursor.execute(query_sessions) 
+    rows=[] 
+    rows = cursor.fetchall()
+    session={
+    "id":0,
+    "tara":0,
+    }
+    if not rows:
+        session["id"] = 404,
+        session["tara"] = 'N/A' 
+    else:
+        session = { 
+        "id":int(test_id),
+        "tara":netoCursor[0],
+        "sessions":[]
+        }  
+        for i in range(0, len(rows)):
+            session["sessions"].append(rows[i])
+    resp = jsonify(session)
+    resp.status_code = 200
+    return resp
 
 
 @app.route('/truck/<id>',methods = ['PUT'])
@@ -134,3 +191,13 @@ def update_truckprovider(id):
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0",debug = False)
+
+
+
+
+
+    
+
+
+
+
