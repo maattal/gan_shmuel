@@ -16,7 +16,17 @@ def init_db():
         user='root',
         password='root'
     )
-
+@app.route('/health',methods = ['GET'])
+def health():
+    try:
+        connect = init_db()  
+        # mycursor = connect.cursor()  
+        # mycursor.execute("show tables")
+        # res = str(mycursor.fetchall())
+    except:
+        return "failed connecting to the database", 500
+    else:
+        return "WELCOME DATA CONNECTION WORKS" ,200
 
 @app.route('/',methods = ['GET'])
 def index():
@@ -80,17 +90,7 @@ def creat_truck():
         return "ProviderID not Found"
 
 
-@app.route('/health',methods = ['GET'])
-def health():
-    try:
-        connect = init_db()  
-        # mycursor = connect.cursor()  
-        # mycursor.execute("show tables")
-        # res = str(mycursor.fetchall())
-    except:
-        return "failed connecting to the database", 500
-    else:
-        return "WELCOME DATA CONNECTION WORKS" ,200
+
 
 
 @app.route("/rates", methods=['POST'])
