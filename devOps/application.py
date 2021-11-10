@@ -50,6 +50,16 @@ def down_up(branch):
         os.system("docker-compose -f weight/docker-compose.yml down")
         os.system("docker-compose -f billing/docker-compose.yml up -d --build")
         os.system("docker-compose -f weight/docker-compose.yml up -d --build")
+        os.chdir("billing")
+        os.system("chmod +x test.py")
+        billingResult=subprocess.check_output(['python3', './test.py'])
+        os.chdir("/app")
+        os.system("docker-compose -f weight/docker-compose.yml up -d --build")
+        os.chdir("weight")
+        os.system("chmod +x test.py")
+        weightResult=subprocess.check_output(['python3', './test.py'])
+        os.chdir("/app")
+        os.system("python3 /app/test/test.py $USER $billingResult $weightResult")
 
 def build_fun(branch):
     if branch == 'staging':
