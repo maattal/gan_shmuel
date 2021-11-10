@@ -2,6 +2,30 @@ from flask import Flask,request
 from flask.wrappers import JSONMixin
 import os,subprocess
 # #https://github.com/maattal/gan_shmuel.git 
+
+
+NETWORK_NAME="blue_net"
+
+#port assiments:
+
+PORTS = {
+    'PORT_CI':'8085',
+    'WEIGHT_PORT_STAGING':'8082',
+    'WEIGHT_PORT_MAIN':'8080',
+    'BILLING_PORT_STAGING':'8081',
+    'BILLING_PORT_MAIN':'8086',
+    }
+
+
+for port in PORTS:
+    os.environ[port] = PORTS[port]
+
+#create a network for DNS conection for api inside ci applications:
+
+os.system(f"docker network create {NETWORK_NAME}")
+
+
+# our git rep -> https://github.com/maattal/gan_shmuel.git 
 app =Flask(__name__) 
 #--------------------WEBHOOK-----------------------
 @app.route('/') 
@@ -18,6 +42,7 @@ def post_request():
     return (return_string, 200, None)
 
 #--------------------BUILD OF THE CONTAINERS------------
+
 def down_up(branch):
         os.system("git fetch")
         os.system(f"git checkout {branch}")
@@ -49,5 +74,5 @@ def build_fun(branch):
 
 
 
-if __name__== '__main__': 
-    app.run(host="0.0.0.0",debug=True,port='8085') 
+if __name__== '__main__':
+    app.run(host="0.0.0.0",debug=True,port='8085',use_reloader=False)
