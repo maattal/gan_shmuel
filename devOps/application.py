@@ -41,7 +41,6 @@ def post_request():
 #--------------------BUILD OF THE CONTAINERS------------
 
 def down_up(branch,commiter):
-    try:
         os.system("git fetch")
         os.system(f"git checkout {branch}")
         os.system("git pull")
@@ -50,16 +49,26 @@ def down_up(branch,commiter):
         os.system("docker-compose -f weight/docker-compose.yml down")
         os.system("docker-compose -f billing/docker-compose.yml up -d --build")
         os.system("docker-compose -f weight/docker-compose.yml up -d --build")
-        os.system("chmod +x billing/test.py")
-        billingResult=subprocess.check_output(['python3', './billing/test.py']).decode("utf-8").strip()
-        os.system("docker-compose -f weight/docker-compose.yml up -d --build")
-        os.system("chmod +x weight/test.py")
-        weightResult=subprocess.check_output(['python3', './weight/test.py']).decode("utf-8").strip()
-        os.chdir("/app")
+        if testing_sendMailReport(branch,commiter):
+            print("success test, push and report :)")
+        else:
+            print("failure to test,don't push and report :(")
+
+
+def testing_sendMailReport(branch,commiter):
+    os.system("chmod +x billing/test.py")
+    billingResult=subprocess.check_output(['python3', './billing/test.py']).decode("utf-8").strip()
+    os.system("chmod +x weight/test.py")
+    weightResult=subprocess.check_output(['python3', './weight/test.py']).decode("utf-8").strip() 
+    os.chdir("/app")
+    try:
         os.system(f"python3 /app/test/test.py {commiter} {billingResult} {weightResult}")
     except:
-        print(f"test failed after commiting from {commiter} to {branch}")
-        return 500, "ERROR"
+        print("failure to send mail")  
+
+    if billingResult=="Ok" and weightResult=="Ok":
+        return True
+    return False
 
 def build_fun(branch):
     if branch == 'staging':
