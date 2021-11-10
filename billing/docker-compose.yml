@@ -15,13 +15,17 @@ services:
 
 
   web:
-    build: ./app 
-    # volumes:
-    #   - ./app:/app
+    build: ./app
     ports:
       - "8081:5000"
+    hostname: localbilling
+    networks:
+      - blue_net
     depends_on:
       - db
    
 volumes:
-  wdata:      
+  wdata:  
+networks:
+  blue_net:
+      

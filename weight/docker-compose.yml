@@ -18,6 +18,11 @@ services:
       - "8082:5000"
     depends_on:
       - db
+    hostname: localweight
+    networks:
+      - blue_net
 
 volumes:
   wdata:
+networks:
+  blue_net:
