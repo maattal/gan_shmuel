@@ -35,7 +35,15 @@ def index():
 
 @app.route('/health',methods = ['GET'])
 def health():
- return 'ok' ,200
+    try:
+        connect = init_db()  
+        # mycursor = connect.cursor()  
+        # mycursor.execute("show tables")
+        # res = str(mycursor.fetchall())
+    except:
+        return "failed connecting to the database", 500
+    else:
+        return "WELCOME DATA CONNECTION WORKS" ,200
 
 
 @app.route("/rates", methods=['POST'])
@@ -94,7 +102,7 @@ def creat_truck():
         return "ProviderID not Found"
 @app.route('/truck/<id>',methods = ['PUT'])
 def put_truck_id():
- return 'ok'
+    return 'ok'
 
 
 
@@ -136,10 +144,14 @@ def itemId(id):
         "sessions":[]
         }  
         for i in range(0, len(rows)):
-             session["sessions"].append(rows[i]["id"])
+            session["sessions"].append(rows[i])
     resp = jsonify(session)
     resp.status_code = 200
     return resp
+
+
+
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0",debug = False)
