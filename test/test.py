@@ -40,5 +40,5 @@ def send_email():
     )
 
 build_data()
-os.system("/home/%s/.local/bin/py.test --html=report.html -s" % user)
+os.system("/usr/local/bin/py.test --html=report.html -s")
 send_email()
