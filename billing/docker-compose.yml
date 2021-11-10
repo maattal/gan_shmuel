@@ -17,7 +17,7 @@ services:
   web:
     build: ./app 
     volumes:
-      - ./app:/app
+      - ./app/in:/app/in
     ports:
       - "5000:5000"
     depends_on:
