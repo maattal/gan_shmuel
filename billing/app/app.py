@@ -129,11 +129,7 @@ def update_truckprovider(id):
         return "OK"
     except:
         return "Invalid input"
- 
-@app.route('/bill/<id>',methods = ['GET'])
-def show_bill():
-    
-    return
+
 
 
 if __name__ == '__main__':
