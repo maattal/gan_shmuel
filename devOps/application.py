@@ -70,12 +70,12 @@ def testing_sendMailReport(branch,commiter):
         return True
     return False
 
-def build_fun(branch):
+def build_fun(branch,commiter):
     if branch == 'staging':
-        down_up(branch)
+        down_up(branch,commiter)
         return (f"working on {branch}aging auto diployment")
     elif branch == 'main':
-        down_up(branch)
+        down_up(branch,commiter)
         return (f"working on {branch} auto diployment")
     else:
         return (f"on this {branch} no action!!")
