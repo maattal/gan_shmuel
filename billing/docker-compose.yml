@@ -6,7 +6,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
     ports:
-      - "8083:3306"
+      - "3306"
     volumes:
       # - ./db:/var/lib/mysql
       #- ./one-db.sql:/docker-entrypoint-initdb.d/one-db.sql
