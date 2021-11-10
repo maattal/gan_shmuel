@@ -1,7 +1,29 @@
 from flask import Flask,request
 from flask.wrappers import JSONMixin
 import os
-# #https://github.com/maattal/gan_shmuel.git 
+
+NETWORK_NAME="blue_net"
+
+#port assiments:
+
+PORTS = {
+    'PORT_CI':'8085',
+    'WEIGHT_PORT_STAGING':'8082',
+    'WEIGHT_PORT_MAIN':'8080',
+    'BILLING_PORT_STAGING':'8081',
+    'BILLING_PORT_MAIN':'8086',
+    }
+
+
+for port in PORTS:
+    os.environ[port] = PORTS[port]
+
+#create a network for DNS conection for api inside ci applications:
+
+os.system(f"docker create {NETWORK_NAME}")
+
+
+# our git rep -> https://github.com/maattal/gan_shmuel.git 
 app =Flask(__name__) 
 #--------------------WEBHOOK-----------------------
 @app.route('/') 
