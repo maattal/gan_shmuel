@@ -26,8 +26,8 @@ def build_fun(branch):
         os.system("git checkout staging")
         os.system("git pull")
         os.chdir("/app")
-        os.system("docker-compose -f billing/docker-compose.yml up --build")
-        os.system("docker-compose -f weight/docker-compose.yml up --build")
+        os.system("docker-compose -f billing/docker-compose.yml up -d --build")
+        os.system("docker-compose -f weight/docker-compose.yml up -d --build")
 #      os.system(f"docker-compose -f docker-composeStaging.yml --build")
         return ("working on staging auto diployment")
     elif branch == 'main':
