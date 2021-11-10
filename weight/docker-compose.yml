@@ -9,13 +9,23 @@ services:
     volumes:
       - ./one-db.sql:/docker-entrypoint-initdb.d/one-db.sql
       - wdata:/var/lib/mysql/:rw
+    networks:
+      - bridge
 
   web:
     build: ./app
     ports:
-      - "5000:5000"
+      - "8082:5000"
     depends_on:
       - db
+    container_name: localweight
+    networks: 
+      - billing_blue_net
+      - bridge 
 
 volumes:
   wdata:
+networks:
+  bridge:
+  billing_blue_net:
+    external: true
