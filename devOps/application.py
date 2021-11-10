@@ -20,7 +20,7 @@ for port in PORTS:
 
 #create a network for DNS conection for api inside ci applications:
 
-os.system(f"docker create {NETWORK_NAME}")
+os.system(f"docker network create {NETWORK_NAME}")
 
 
 # our git rep -> https://github.com/maattal/gan_shmuel.git 
