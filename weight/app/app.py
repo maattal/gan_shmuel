@@ -77,47 +77,44 @@ def get_batch_weight():
     conn.commit()
     return "ok"
 
-# @app.route('/item/<id>',methods = ['GET'])
-# def get_item(id):
-#     t1=request.args.get('from')
-#     t2=request.args.get('to')
+@app.route('/item/<id>',methods = ['GET'])
+def get_item(id):
+    connect = init()
+    cur = connect.cursor(dictionary=True, buffered=True)
+    fromTime = request.args.get('from') if request.args.get('from') else datetime.now().strftime("%Y%m%d000000")
+    toTime = request.args.get('to') if request.args.get('to') else datetime.now().strftime("%Y%m%d%H%M%S")
+    session = { 
+        "id":int(id),
+        "tara":0,
+        "sessions":[]
+    }
 
-#     data = []
-#     session = { 
-#         "id":int(id),
-#         "tara":0,
-#         "sessions":[]
-#     }
+    query_truck = f"SELECT bruto,neto,id,date FROM sessions WHERE trucks_id='{id}' AND date BETWEEN '{fromTime}' AND '{toTime}';"
+    #want to add a query_container
+    cur.execute(query_truck)
+    res=cur.fetchall()
 
-#     if not t2 :
-#         t2=strftime("%Y%m%d%H%M%S",gmtime())
-#     if not t1:
-#         t1=strftime("%Y%m01000000", gmtime())
+    if not res: #error case 
+        session["id"] = 404,
+        session["tara"] = 'N/A'
+    for ind in range(len(res)):
+        session["tara"] += float(res[ind]["bruto"]) - float(res[ind]["neto"])
+        session["sessions"].append(res[ind]["id"])
 
-#     query = f"SELECT bruto,neto,id,date FROM sessions WHERE trucks_id={id} AND date BETWEEN {t1} AND {t2}"     # we need to call to container also for the id.
+    return jsonify(session)
 
-#     try:
-#         conn = database.getConnection()
-#         cursor = conn.cursor(dictionary=True, buffered=True)
-#         cursor.execute(query)
-#         res=cursor.fetchall()
-#     except:
-#         print ("mysql has failed to reach the server..")
+@app.route('/weight',methods = ['GET'])
+def get_weight():
+    connect = init()
+    cur = connect.cursor(dictionary=True, buffered=True)
+    fromTime = request.args.get('from') if request.args.get('from') else datetime.now().strftime("%Y%m%d000000")
+    toTime = request.args.get('to') if request.args.get('to') else datetime.now().strftime("%Y%m%d%H%M%S")
+    filter = request.args.get('filter') if request.args.get('filter') else None 
 
-
-#     if not res: #error case 
-#         session["id"] = 404,
-#         session["tara"] = 'N/A'
-
-#     for ind in range(len(res)):
-#         session["tara"] += float(res[ind]["bruto"]) - float(res[ind]["neto"])   ## need to (Reminder: Bruto = Neto (fruit) + Tara (truck) + sum(Tara(Containers)))
-#         session["sessions"].append(res[ind]["id"])
-
-#     return jsonify(session)
-
-# @app.route('/weight',methods = ['GET'])
-# def get_weight():
-#     pass
+    query="SELECT id,direction,bruto,neto,products_id FROM sessions WHERE date BETWEEN '{0}' AND '{1}' AND direction = '{2}';"
+    cur.execute(query.format(fromTime, toTime, filter))
+    rows = cur.fetchall()
+    return jsonify(rows)
 
 # @app.route('/weight',methods = ['POST'])
 # def post_weight():

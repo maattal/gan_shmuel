@@ -87,7 +87,7 @@ INSERT INTO trucks (truckid,providerid,weight,unit) VALUES ('12365',4,854,'lbs')
 INSERT INTO sessions (direction, f, date, bruto, neto, trucks_id, products_id) VALUES ('in', 1, '20181218181512', 999, 800, 77777, 2);
 INSERT INTO sessions (direction, f, date, bruto, neto, trucks_id, products_id) VALUES ('in', 1, '20161218181512', 120, 100, 99888, 1);
 INSERT INTO sessions (direction, f, date, bruto, neto, trucks_id, products_id) VALUES ('out', 1, '20170920102017', 741, 650, 12365, 3);
-INSERT INTO sessions (id, direction, f, date, bruto, neto, trucks_id, products_id) VALUES (1, 'out', 1, '20170920102017', 741, 650, 12365, 3);
+
 
 
 
