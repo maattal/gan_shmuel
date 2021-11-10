@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Welcome Blue team -
 Here our repository for the week,few steps before you can pull/push files into it.
 
@@ -39,3 +40,6 @@ test-demo-shay
 asaad try
 asaad try
 asaad try agian
+=======
+plese work
+>>>>>>> d2e59cbc1bf7748a88270c829ba37e26bade8007
