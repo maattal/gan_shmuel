@@ -1,23 +1,28 @@
-version: "3.0"
+version: "3"
 services:
   db:
     image: mysql/mysql-server:8.0
     environment:
       MYSQL_ROOT_PASSWORD: root
     ports:
-      - "3306"
+      - "8084:3306"
     volumes:
       # - ./one-db.sql:/docker-entrypoint-initdb.d/one-db.sql
       - wdata:/var/lib/mysql/:rw
 
   web:
     build: ./app
-    # volumes:
-    #   - ./app:/app
     ports:
-      - "5000:5000"
+      - "8082:5000"
     depends_on:
       - db
+    container_name: localweight
+    networks:
+      - billing_blue_net
+
 
 volumes:
   wdata:
+networks:
+  billing_blue_net:
+     external: true
