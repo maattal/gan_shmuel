@@ -40,16 +40,25 @@ def post_request():
     return (return_string, 200, None)
 
 #--------------------BUILD OF THE CONTAINERS------------
+
 def down_up(branch):
         os.system("git fetch")
         os.system(f"git checkout {branch}")
         os.system("git pull")
         os.chdir("/app")
-        os.system("docker-compose -f billing/docker-compose.yml down")
-        os.system("docker-compose -f weight/docker-compose.yml down")
+        os.system("docker-compose -f billing/docker-compose.yml weight/docker-compose.yml down")
+        os.system("docker-compose -f billing/docker-compose.yml weight/docker-compose.yml up -d --build")
 
-        os.system("docker-compose -f billing/docker-compose.yml up -d --build")
-        os.system("docker-compose -f weight/docker-compose.yml up -d --build")
+# def down_up(branch):
+#         os.system("git fetch")
+#         os.system(f"git checkout {branch}")
+#         os.system("git pull")
+#         os.chdir("/app")
+#         os.system("docker-compose -f billing/docker-compose.yml down")
+#         os.system("docker-compose -f weight/docker-compose.yml down")
+
+#         os.system("docker-compose -f billing/docker-compose.yml up -d --build")
+#         os.system("docker-compose -f weight/docker-compose.yml up -d --build")
 
 def build_fun(branch):
     if branch == 'staging':
