@@ -1,4 +1,4 @@
-version: "3"
+version: "3.0"
 
 services:
   db:
@@ -15,17 +15,13 @@ services:
 
 
   web:
-    build: ./app
+    build: ./app 
+    # volumes:
+    #   - ./app:/app
     ports:
       - "8081:5000"
     depends_on:
       - db
-    container_name: localbilling
-    networks:
-      - blue_net
    
 volumes:
-  wdata:  
-networks:
-  blue_net:
-      
+  wdata:      
