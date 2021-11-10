@@ -4,11 +4,9 @@ import mysql.connector
 from datetime import datetime
 from openpyxl import  load_workbook
 
-
-
 app = Flask(__name__)
-
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
+
 # db contenction
 def init_db():
     return mysql.connector.connect(
@@ -18,20 +16,15 @@ def init_db():
         password='root'
     )
 
-
 @app.route('/',methods = ['GET'])
 def index():
-    # return 'ko'
     connect = init_db()  
     cur = connect.cursor()  
     cur.execute("SHOW TABLES;")
     rows = cur.fetchall()
     resp = jsonify(rows)
     resp.status_code = 200
-    return resp
-    # connect.close()
-
-
+    return resp   
 
 @app.route('/provider/<id>',methods = ['PUT'])
 def update_name(id):
@@ -43,11 +36,10 @@ def update_name(id):
         mycursor.execute(query)
         conn.commit()
     except:
-        return "Name already exists"
+        return "Name already exists", 500
     else:   
         return "OK"
        
-
 @app.route('/provider',methods = ['POST'])
 def creat_provider():
     try:
@@ -58,7 +50,7 @@ def creat_provider():
         mycursor.execute(query)
         conn.commit()
     except:
-        return "Name already exists"    
+        return "Name already exists", 500    
     else:
         mycursor.execute(f"SELECT * FROM providers WHERE providername = '{pro_name}';")
         rows = mycursor.fetchmany(size=1)
@@ -78,13 +70,11 @@ def creat_truck():
         conn.commit()
         return 'ok'
     except:
-        return "ProviderID not Found"
-
+        return "ProviderID not Found", 500
 
 @app.route('/health',methods = ['GET'])
 def health():
  return 'ok' ,200
-
 
 @app.route("/rates", methods=['POST'])
 def upload_xl_data():
@@ -107,23 +97,9 @@ def upload_xl_data():
     connect.commit()
     return "a"
 
-
-
-@app.route('/provider',methods = ['POST'])
-def creat_provider():
-    pro_name=request.args.get('name')
-    conn = init_db()
-    mycursor = conn.cursor()
-    query = (f"INSERT INTO providers (providername) VALUES ('{pro_name}')")
-    mycursor.execute(query)
-    conn.commit()
-
-    return "ok" 
-
 @app.route('/truck/<id>',methods = ['PUT'])
 def put_truck_id():
  return 'ok'
-
 
 
 if __name__ == '__main__':
