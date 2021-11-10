@@ -18,6 +18,19 @@ def init_db():
     )
 
 
+
+@app.route('/health',methods = ['GET'])
+def health():
+    try:
+        connect = init_db()  
+        # mycursor = connect.cursor()  
+        # mycursor.execute("show tables")
+        # res = str(mycursor.fetchall())
+    except:
+        return "failed connecting to the database", 500
+    else:
+        return "WELCOME DATA CONNECTION WORKS" ,200
+
 @app.route('/',methods = ['GET'])
 def index():
     # return 'ko'
@@ -65,6 +78,9 @@ def creat_provider():
         resp.status_code = 200
         return resp
 
+
+
+
 @app.route('/truck',methods = ['POST'])
 def creat_truck():
     try:
@@ -78,19 +94,6 @@ def creat_truck():
         return 'ok'
     except:
         return "ProviderID not Found"
-
-
-@app.route('/health',methods = ['GET'])
-def health():
-    try:
-        connect = init_db()  
-        # mycursor = connect.cursor()  
-        # mycursor.execute("show tables")
-        # res = str(mycursor.fetchall())
-    except:
-        return "failed connecting to the database", 500
-    else:
-        return "WELCOME DATA CONNECTION WORKS" ,200
 
 
 @app.route("/rates", methods=['POST'])
@@ -116,40 +119,6 @@ def upload_xl_data():
 
 
 
-@app.route('/provider',methods = ['POST'])
-def creat_provider():
-    try:
-        pro_name=request.args.get('name')
-        conn = init_db()
-        mycursor = conn.cursor()
-        query = (f"INSERT INTO providers (providername) VALUES ('{pro_name}')")
-        mycursor.execute(query)
-        conn.commit()
-    except:
-        return "Name already exists"
-    else:
-        mycursor.execute(f"SELECT * FROM providers WHERE providername = '{pro_name}';")
-        rows = mycursor.fetchmany(size=1)
-        resp = jsonify(rows)
-        resp.status_code = 200
-        return resp
-
-@app.route('/truck',methods = ['POST'])
-def creat_truck():
-    try:
-        pro_id=request.args.get('providerid')
-        pro_lic=request.args.get('truckid')
-        conn = init_db()
-        mycursor = conn.cursor()
-        query = (f"INSERT INTO trucks (truckid,providerid) VALUES ('{pro_lic}','{pro_id}')")
-        mycursor.execute(query)
-        conn.commit()
-        return 'ok'
-    except:
-        return "ProviderID not Found"
-@app.route('/truck/<id>',methods = ['PUT'])
-def put_truck_id():
-    return 'ok'
 
 
 
