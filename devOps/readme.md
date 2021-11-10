@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-hi
-baba
-blabklabla
-=======
 simple docker on the ec2 instance :
 dont put the requirement of the request
 
@@ -16,4 +11,3 @@ Rebuild the docker on the server after the changes -> webhook works! [need to ma
 
 run the docker ci with socket volume for the dind strategy :
 sudo docker run -v /var/run/docker.sock:/var/run/docker.sock -ti container_name
->>>>>>> 5fa5c0bf57cf33fcf472fbaa7309fa345f991de0

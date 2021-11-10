@@ -1,8 +1,6 @@
 from flask import Flask,request
 from flask.wrappers import JSONMixin
-import os,subprocess
-# #https://github.com/maattal/gan_shmuel.git 
-
+import os
 
 NETWORK_NAME="blue_net"
 
@@ -51,6 +49,7 @@ def down_up(branch):
         os.system("docker-compose -f billing/docker-compose.yml down")
         os.system("docker-compose -f weight/docker-compose.yml down")
         os.system("docker-compose -f billing/docker-compose.yml up -d --build")
+        os.system("docker-compose -f weight/docker-compose.yml up -d --build")
         os.chdir("billing")
         os.system("chmod +x test.py")
         billingResult=subprocess.check_output(['python3', './test.py'])
@@ -74,5 +73,8 @@ def build_fun(branch):
 
 
 
-if __name__== '__main__':
-    app.run(host="0.0.0.0",debug=True,port='8085',use_reloader=False)
+if __name__== '__main__': 
+    app.run(host="0.0.0.0",debug=True,port='8085',use_reloader=False) 
+
+
+  
