@@ -1,15 +1,14 @@
-from flask import Flask
-from flask_restful import Api, Resource
-import mysql.connector 
-from flask import request,Response
-import csv
-from flask import jsonify
-import os,sys,json
+from flask import Flask, request, jsonify
+from flask_restful import Api
 from datetime import datetime
+import mysql.connector 
+import json
+
 
 app = Flask(__name__)
 api = Api(app)  
 
+#initialize connection to data base.
 def init():
     return mysql.connector.connect(
         host='db',
@@ -18,13 +17,15 @@ def init():
         password='root'
     )
 
+#checks server status.
 @app.route("/health", methods=["GET"])
 def get_health():
     return "ok"
 
+#loads tables from database.
 @app.route("/", methods=["GET"])
 def get():
-    connect = init()
+    connect = init() #connects to the db
     cur = connect.cursor()
     cur.execute("SHOW TABLES;")
     rows = cur.fetchall()
@@ -32,29 +33,31 @@ def get():
     resp.status_code = 200
     return resp
 
+#returns documentation for specific session by id.
 @app.route("/session/<id>", methods=["GET"])
 def get_session(id):
-    conn = init()
+    conn = init() # connection to db
     mycursor = conn.cursor()
-    mycursor.execute(f"SELECT * FROM sessions WHERE id='{id}'")
+    mycursor.execute(f"SELECT * FROM sessions WHERE id='{id}'") #access all of the session data by id.
     check = mycursor.fetchall()
     content = {}
     if check != []:
-        if check[0][1] != 'out':
+        if check[0][1] != 'out': #if not out
             content = {'id': check[0][0], 'truck': check[0][6], 'bruto': check[0][4]}
-        else:
+        else: # if out
             content = {'id': check[0][0], 'truck': check[0][6], 'bruto': check[0][4], 'truckTara': check[0][4]-check[0][5], 'neto': check[0][5]}
         return jsonify(content)
-    return "none", 404
+    return "none", 404 #not existing
 
+#posts weights of new containers, reads from a given(csv/json) file
 @app.route('/batch-weight',methods = ['POST'])
 def get_batch_weight():
-    conn = init()
+    conn = init() # connection to db
     cursor = conn.cursor()
-    file_name="/app/in/"+request.args.get('filename')
+    file_name="/app/in/"+request.args.get('filename') #file path.
     l_csv = []
 
-    if file_name[-4:] =='.csv':
+    if file_name[-4:] =='.csv': #csv
         with open(file_name, 'r') as file:
             header = file.readline()[:-1].split(",")
             unit = header[1]
@@ -64,22 +67,24 @@ def get_batch_weight():
                 csv_js["weight"]=int(line[:-1].split(",")[1])
                 csv_js["unit"]=unit[1:-1]
                 l_csv.append(csv_js)
-    else:
+    else: #json
         try:
             with open(file_name, 'r') as file:
                 data = file.read()
                 l_csv = json.loads(data)
-        except:
+        except: #error
             return "error with file"
-    q = "INSERT INTO containers (id,weight,unit) VALUES (%s,%s,%s) ; \n"
+
+    q = "INSERT INTO containers (id,weight,unit) VALUES (%s,%s,%s) ; \n" #appends to 'containers' values from the file.
     for csv_j in l_csv:
         cursor.execute(q, [csv_j['id'],csv_j['weight'],csv_j['unit']])
-    conn.commit()
+    conn.commit() #updates the db.
     return "ok"
 
+#return info about given truck id between specific time-stamps, if not existing 404 will be returned.
 @app.route('/item/<id>',methods = ['GET'])
 def get_item(id):
-    connect = init()
+    connect = init() #db connection
     cur = connect.cursor(dictionary=True, buffered=True)
     fromTime = request.args.get('from') if request.args.get('from') else datetime.now().strftime("%Y%m%d000000")
     toTime = request.args.get('to') if request.args.get('to') else datetime.now().strftime("%Y%m%d%H%M%S")
@@ -93,7 +98,7 @@ def get_item(id):
     #want to add a query_container
     cur.execute(query_truck)
     res=cur.fetchall()
-
+    
     if not res: #error case 
         session["id"] = 404,
         session["tara"] = 'N/A'
@@ -103,6 +108,7 @@ def get_item(id):
 
     return jsonify(session)
 
+#returns weight sessions between two time stamps.
 @app.route('/weight',methods = ['GET'])
 def get_weight():
     connect = init()
@@ -114,14 +120,23 @@ def get_weight():
     query="SELECT id,direction,bruto,neto,products_id FROM sessions WHERE date BETWEEN '{0}' AND '{1}' AND direction = '{2}';"
     cur.execute(query.format(fromTime, toTime, filter))
     rows = cur.fetchall()
+    if not rows: return "not existing."
     return jsonify(rows)
+
+#returns list of id's for all containers with an unknown weight.
+@app.route('/unknown',methods = ['GET'])
+def get_unknown():
+    conn = init()
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM containers WHERE weight IS NULL")
+    rows = cur.fetchall()
+
+    if not rows:
+	    return "No missing weights found in data base"
+    return str(list(map(lambda x: str(x[0]), rows)))
 
 # @app.route('/weight',methods = ['POST'])
 # def post_weight():
-#     pass
-
-# @app.route('/unknown',methods = ['GET'])
-# def get_unknown():
 #     pass
 
 if __name__ == "__main__":
