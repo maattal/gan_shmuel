@@ -8,7 +8,7 @@ from openpyxl import  load_workbook
 
 app = Flask(__name__)
 
-
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 # db contenction
 def init_db():
     return mysql.connector.connect(
@@ -31,6 +31,54 @@ def index():
     return resp
     # connect.close()
 
+
+
+@app.route('/provider/<id>',methods = ['PUT'])
+def update_name(id):
+    try:
+        new_name=request.args.get('name')
+        conn = init_db()
+        mycursor = conn.cursor()
+        query = (f"UPDATE providers SET providername = '{new_name}' WHERE id = '{id}'")
+        mycursor.execute(query)
+        conn.commit()
+    except:
+        return "Name already exists"
+    else:   
+        return "OK"
+       
+
+@app.route('/provider',methods = ['POST'])
+def creat_provider():
+    try:
+        pro_name=request.args.get('name')
+        conn = init_db()
+        mycursor = conn.cursor()
+        query = (f"INSERT INTO providers (providername) VALUES ('{pro_name}')")
+        mycursor.execute(query)
+        conn.commit()
+    except:
+        return "Name already exists"    
+    else:
+        mycursor.execute(f"SELECT * FROM providers WHERE providername = '{pro_name}';")
+        rows = mycursor.fetchmany(size=1)
+        resp = jsonify(rows)
+        resp.status_code = 200
+        return resp
+
+@app.route('/truck',methods = ['POST'])
+def creat_truck():
+    try:
+        pro_id=request.args.get('providerid')
+        pro_lic=request.args.get('truckid')
+        conn = init_db()
+        mycursor = conn.cursor()
+        query = (f"INSERT INTO trucks (truckid,providerid) VALUES ('{pro_lic}','{pro_id}')")
+        mycursor.execute(query)
+        conn.commit()
+        return 'ok'
+    except:
+        return "ProviderID not Found"
 
 
 @app.route('/health',methods = ['GET'])
