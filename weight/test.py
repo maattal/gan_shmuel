@@ -1,1 +1,5 @@
-return 'Ok'
+def main():
+  print("Ok")
+
+main()
+
