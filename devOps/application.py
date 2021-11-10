@@ -18,30 +18,41 @@ def post_request():
     return (return_string, 200, None)
 
 #--------------------BUILD OF THE CONTAINERS------------
-def build_fun(branch):
-    os.system("pwd")
-    os.system("docker-compose down")
-    if branch == 'staging':
+def down_up(branch):
         os.system("git fetch")
-        os.system("git checkout staging")
+        os.system(f"git checkout {branch}")
         os.system("git pull")
         os.chdir("/app")
-       # os.system("docker-compose -f billing/docker-compose.yml up -d --build")
+        os.system("docker-compose -f billing/docker-compose.yml down")
+        os.system("docker-compose -f weight/docker-compose.yml down")
+
+        os.system("docker-compose -f billing/docker-compose.yml up -d --build")
         os.system("docker-compose -f weight/docker-compose.yml up -d --build")
-#      os.system(f"docker-compose -f docker-composeStaging.yml --build")
-        return ("working on staging auto diployment")
+
+def build_fun(branch):
+    if branch == 'staging':
+        down_up(branch)
+        return (f"working on {branch}aging auto diployment")
     elif branch == 'main':
-        os.system("git fetch")
-        os.system("git checkout main")
-        os.system("git pull")
-        os.chdir("/app")
-        os.system("docker-compose -f /billing/docker-compose.yml up")
-        os.system("docker-compose -f /weight/docker-compose.yml up")
-        #os.system(f"docker-compose -f docker-composeMain.yml --build")
-        return ("working on master auto diployment")
+        down_up(branch)
+        return (f"working on {branch} auto diployment")
     else:
         return (f"on this {branch} no action!!")
 
 
+
 if __name__== '__main__': 
     app.run(host="0.0.0.0",debug=True,port='8085') 
+
+
+    
+
+#--------------------BUILD OF THE CONTAINERS------------
+
+#
+
+
+
+
+if _name== 'main_': 
+    app.run(host="0.0.0.0",debug=True,port='8085')
