@@ -34,7 +34,7 @@ def send_email():
     yag = yagmail.SMTP("blueteamdevleap2021@gmail.com","Asaad2021!")
     yag.send(
         to=receiver,
-        subject="CI test with html report",
+        subject="CI test with html report from {user}",
         contents=body, 
         attachments=filename,
     )
