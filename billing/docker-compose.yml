@@ -8,7 +8,7 @@ services:
     ports:
       - "3306"
     volumes:
-      - app/one-db.sql:/docker-entrypoint-initdb.d/one-db.sql
+      - ./app/one-db.sql:/docker-entrypoint-initdb.d/one-db.sql
       - wdata:/var/lib/mysql/:rw
       # - ${TEAM_PATH}:/weight
     networks:
