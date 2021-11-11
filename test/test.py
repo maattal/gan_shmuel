@@ -29,9 +29,9 @@ def build_data():
 
 def send_email():
     if billing_status == "Ok" and weight_status == "Ok":
-	build_pass="test successfull , push successfull"
+	    build_pass="test successfull , push successfull"
     else :
-  	build_pass=f"test failed, billing status: {billing_status} , weight status: {weight_status}, push failed"
+  	    build_pass=f"test failed, billing status: {billing_status} , weight status: {weight_status}, push failed"
     receiver = ['asaad.mosa@gmail.com','malki.attal@hotmail.fr','shaykllifalon@gmail.com']
     body = f"{build_pass}"
     filename = "report.html"
