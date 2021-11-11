@@ -31,11 +31,10 @@ CREATE TABLE `products` (
 DROP TABLE IF EXISTS `providers`;
 CREATE TABLE `providers` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `providername` varchar(45) DEFAULT NULL,
+  `providername` varchar(45) DEFAULT NULL UNIQUE,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 DROP TABLE IF EXISTS `trucks`;
 CREATE TABLE `trucks` (
@@ -45,9 +44,9 @@ CREATE TABLE `trucks` (
   `weight` float DEFAULT NULL,
   `unit` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
+  FOREIGN KEY (providerid) REFERENCES providers(id),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 DROP TABLE IF EXISTS `sessions`;
 CREATE TABLE `sessions` (
