@@ -7,6 +7,7 @@ from openpyxl import  load_workbook
 import openpyxl as xl
 
 import requests
+from requests.api import delete
 from mockAPI import mocked_json, mocked_sessions
 
 app = Flask(__name__)
@@ -26,16 +27,14 @@ def init_db():
 
 @app.route('/',methods = ['GET'])
 def index():
-    connect = init_db()  
-    cur = connect.cursor()  
-    cur.execute("SHOW TABLES;")
-    rows = cur.fetchall()
-    resp = jsonify(rows)
-    resp.status_code = 200
-    return resp   
-
-
-    # connect.close()
+    # connect = init_db()  
+    # cur = connect.cursor()  
+    # cur.execute("SHOW TABLES;")
+    # rows = cur.fetchall()
+    # resp = jsonify(rows)
+    # resp.status_code = 200
+    # return resp 
+    return "ok" 
 
 #11111111111111111111111111111111111111
 @app.route('/health',methods = ['GET'])
@@ -68,35 +67,7 @@ def creat_provider():
         resp = jsonify(rows)
         resp.status_code = 200
         return resp
-
-
-
-
-
-
-@app.route('/provider/<id>',methods = ['PUT'])
-def update_name(id):
-    try:
-        new_name=request.args.get('name')
-        conn = init_db()
-        mycursor = conn.cursor()
-        query = (f"UPDATE providers SET providername = '{new_name}' WHERE id = '{id}'")
-        mycursor.execute(query)
-        conn.commit()
-    except:
-        return "Name already exists", 500
-    else:   
-        return "OK", 200
-       
-
-
-
-
-
-
-
-
-
+#333333333333333333333333333333333333
 @app.route("/rates", methods=['POST'])
 def upload_xl_data():
     filename=upload_folder+request.args.get('filename')
@@ -118,27 +89,57 @@ def upload_xl_data():
 
     connect.commit()
     return "a" ,200
-
-
-
-
-
+#444444444444444444444444444444444444444
 @app.route("/rates",methods=['GET'])
 def download_file():
     try:
         return send_from_directory(upload_folder, xlfile, as_attachment=True)
     except:
         return
-
+#5555555555555555555555555555555555555555555
 @app.route('/truck',methods = ['POST'])
 def creat_truck():
     try:
         pro_id=request.args.get('providerid')
         pro_lic=request.args.get('truckid')
         conn = init_db()
+        mycursor = conn.cursor()
+        query = (f"INSERT INTO trucks (truckid,providerid) VALUES ('{pro_lic}','{pro_id}')")
+        mycursor.execute(query)
+        conn.commit()
+        return 'ok'
     except:
         return "ProviderID not Found"
+#6666666666666666666666666666666666666666666
+@app.route('/truck/<id>',methods = ['PUT'])
+def update_truckprovider(id):
+    try:
+        new_id = request.args.get('providerid')
+        conn = init_db()
+        mycursor = conn.cursor()
+        query = (f"UPDATE trucks SET providerid = '{new_id}' WHERE truckid = '{id}'")
+        mycursor.execute(query)
+        conn.commit()
+        return "OK"
+    except:
+        return "Invalid input"
 
+
+
+@app.route('/provider/<id>',methods = ['PUT'])
+def update_name(id):
+    try:
+        new_name=request.args.get('name')
+        conn = init_db()
+        mycursor = conn.cursor()
+        query = (f"UPDATE providers SET providername = '{new_name}' WHERE id = '{id}'")
+        mycursor.execute(query)
+        conn.commit()
+    except:
+        return "Name already exists"
+    else:   
+        return "OK"
+#7777777777777777777777777777777777777777
 
 @app.route('/truck/<id>', methods=['GET'])
 def itemId(id):
@@ -184,18 +185,7 @@ def itemId(id):
     return resp
 
 
-@app.route('/truck/<id>',methods = ['PUT'])
-def update_truckprovider(id):
-    try:
-        new_id = request.args.get('providerid')
-        conn = init_db()
-        mycursor = conn.cursor()
-        query = (f"UPDATE trucks SET providerid = '{new_id}' WHERE truckid = '{id}'")
-        mycursor.execute(query)
-        conn.commit()
-        return "OK"
-    except:
-        return "Invalid input"
+
 
         
 @app.route("/weight" , methods=['GET'])
@@ -297,7 +287,12 @@ def billId(id):
         #     dict["rates"]=row[1]
         #     dict["pay"]=dict["rates"] * dict ["amount"]
         #     total += dict["pay"]
-            
+    for dict in products:
+        if dict["amount"]==0:
+            products.remove(dict)
+    for dict in products:
+        if dict["amount"]==0:
+            products.remove(dict)
     provider = { 
         "id": int(id),
         "name": n[0][0],
@@ -314,7 +309,7 @@ def billId(id):
 
 
     conn.commit() 
-
+    # response = requests.get(f"http://3.70.209.94:8083/weight?from=11111111111111&to=88888888888888&filter=out")
     resp = jsonify(provider)
     resp.status_code = 200
     return resp

@@ -5,7 +5,7 @@ def test():
 
     finalResponse = "OK"
 
-    host_url = "http://localhost:5000"
+    host_url = "http://localhost:8081"
 
     if not requests.get(host_url).status_code == 200:
         finalResponse = "False"
@@ -75,7 +75,7 @@ def test():
     #########################
 
     #GET/bill ###############
-    #if not requests.get(host_url+"/bill/3").status_code == 200:
+    if not requests.get(host_url+"/bill/3").status_code == 200:
         finalResponse = "False"
         return finalResponse
     #########################
