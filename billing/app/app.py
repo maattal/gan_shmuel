@@ -6,8 +6,6 @@ from openpyxl import  load_workbook
 import openpyxl as xl
 
 
-
-
 app = Flask(__name__)
 upload_folder = 'in/'
 xlfile='rates.xlsx'
@@ -35,19 +33,15 @@ def health():
     else:
         return "WELCOME DATA CONNECTION WORKS" ,200
 
-#@app.route('/',methods = ['GET'])
-#def index():
-    # return 'ko'
-  #  connect = init_db()  
-   # cur = connect.cursor()  
-  #  cur.execute("SHOW TABLES;")
-  #  rows = cur.fetchall()
-  #  resp = jsonify(rows)
-  #  resp.status_code = 200
-  #  return resp
-    # connect.close()
-
-
+@app.route('/',methods = ['GET'])
+def index():
+    connect = init_db()  
+    cur = connect.cursor()  
+    cur.execute("SHOW TABLES;")
+    rows = cur.fetchall()
+    resp = jsonify(rows)
+    resp.status_code = 200
+    return resp   
 
 @app.route('/provider/<id>',methods = ['PUT'])
 def update_name(id):
@@ -63,7 +57,6 @@ def update_name(id):
     else:   
         return "OK"
        
-
 @app.route('/provider',methods = ['POST'])
 def creat_provider():
     try:
@@ -74,15 +67,13 @@ def creat_provider():
         mycursor.execute(query)
         conn.commit()
     except:
-        return "Name already exists"    
+        return "Name already exists"   
     else:
         mycursor.execute(f"SELECT * FROM providers WHERE providername = '{pro_name}';")
         rows = mycursor.fetchmany(size=1)
         resp = jsonify(rows)
         resp.status_code = 200
         return resp
-
-
 
 
 
@@ -112,8 +103,10 @@ def upload_xl_data():
 
 @app.route("/rates",methods=['GET'])
 def download_file():
-   return send_from_directory(upload_folder, xlfile,as_attachment=True)
-
+    try:
+        return send_from_directory(upload_folder, xlfile, as_attachment=True)
+    except:
+        return
 
 @app.route('/truck',methods = ['POST'])
 def creat_truck():
@@ -180,13 +173,12 @@ def update_truckprovider(id):
         new_id = request.args.get('providerid')
         conn = init_db()
         mycursor = conn.cursor()
-        query = (f"UPDATE trucks SET providerid = '{new_id}' WHERE id = '{id}'")
+        query = (f"UPDATE trucks SET providerid = '{new_id}' WHERE truckid = '{id}'")
         mycursor.execute(query)
         conn.commit()
         return "OK"
     except:
         return "Invalid input"
-
 
 
 if __name__ == '__main__':
