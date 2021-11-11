@@ -7,12 +7,8 @@ import openpyxl as xl
 
 
 app = Flask(__name__)
-<<<<<<< HEAD
-app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
-=======
 upload_folder = 'in/'
 xlfile='rates.xlsx'
->>>>>>> billing
 
 # db contenction
 def init_db():
@@ -23,8 +19,6 @@ def init_db():
         password='root'
     )
 
-<<<<<<< HEAD
-=======
 
 
 @app.route('/health',methods = ['GET'])
@@ -39,7 +33,6 @@ def health():
     else:
         return "WELCOME DATA CONNECTION WORKS" ,200
 
->>>>>>> billing
 @app.route('/',methods = ['GET'])
 def index():
     connect = init_db()  
@@ -82,23 +75,6 @@ def creat_provider():
         resp.status_code = 200
         return resp
 
-<<<<<<< HEAD
-@app.route('/truck',methods = ['POST'])
-def creat_truck():
-    try:
-        pro_id=request.args.get('providerid')
-        pro_lic=request.args.get('truckid')
-        conn = init_db()
-        mycursor = conn.cursor()
-        query = (f"INSERT INTO trucks (truckid,providerid) VALUES ('{pro_lic}','{pro_id}')")
-        mycursor.execute(query)
-        conn.commit()
-        return 'ok'
-    except:
-        return "ProviderID not Found", 500
-=======
-
->>>>>>> billing
 
 
 
@@ -124,13 +100,13 @@ def upload_xl_data():
     connect.commit()
     return "a"
 
-<<<<<<< HEAD
-=======
 
 @app.route("/rates",methods=['GET'])
 def download_file():
-   return send_from_directory(upload_folder, xlfile,as_attachment=True)
-
+    try:
+        return send_from_directory(upload_folder, xlfile, as_attachment=True)
+    except:
+        return 500
 
 @app.route('/truck',methods = ['POST'])
 def creat_truck():
@@ -144,7 +120,7 @@ def creat_truck():
         conn.commit()
         return 'ok'
     except:
-        return "ProviderID not Found"
+        return "ProviderID not Found", 500
 
 
 @app.route('/truck/<id>', methods=['GET'])
@@ -191,19 +167,18 @@ def itemId(id):
     return resp
 
 
->>>>>>> billing
 @app.route('/truck/<id>',methods = ['PUT'])
 def update_truckprovider(id):
     try:
         new_id = request.args.get('providerid')
         conn = init_db()
         mycursor = conn.cursor()
-        query = (f"UPDATE trucks SET providerid = '{new_id}' WHERE id = '{id}'")
+        query = (f"UPDATE trucks SET providerid = '{new_id}' WHERE truck_id = '{id}'")
         mycursor.execute(query)
         conn.commit()
         return "OK"
     except:
-        return "Invalid input"
+        return "Invalid input", 500
 
 
 if __name__ == '__main__':
