@@ -52,7 +52,7 @@ def down_up(branch,commiter):
         test_result= testing_sendMailReport(branch,commiter)
         os.system("docker-compose -f billing/docker-compose.yml down") 
         os.system("docker-compose -f weight/docker-compose.yml  down")
-        if test_result:
+        if False:
             os.system("docker-compose -f billing/docker-compose.yml --project-name \"stable_Billing\" up -d --build")
             os.system("docker-compose -f weight/docker-compose.yml --project-name \"stable_Weight\" up -d --build")
             print("success test, push and report :)")
