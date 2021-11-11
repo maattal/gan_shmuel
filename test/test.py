@@ -6,6 +6,7 @@ import json
 user=sys.argv[1]
 billing_status=sys.argv[2]
 weight_status=sys.argv[3]
+branch=sys.argv[4]
 
 def build_data():
     data={}
@@ -27,14 +28,18 @@ def build_data():
 
 
 def send_email():
+    if billing_status == "Ok" and weight_status == "Ok":
+	build_pass="test successfull , push successfull"
+    else :
+  	build_pass=f"test failed, billing status: {billing_status} , weight status: {weight_status}, push failed"
     receiver = ['asaad.mosa@gmail.com','malki.attal@hotmail.fr','shaykllifalon@gmail.com']
-    body = "hi, report from your CI server"
+    body = f"{build_pass}"
     filename = "report.html"
 
     yag = yagmail.SMTP("blueteamdevleap2021@gmail.com","Asaad2021!")
     yag.send(
         to=receiver,
-        subject=f"CI test with html report from {user}",
+        subject=f"CI test with html report from {user} for branch : {branch}",
         contents=body, 
         attachments=filename,
     )

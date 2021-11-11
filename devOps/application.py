@@ -45,13 +45,27 @@ def down_up(branch,commiter):
         os.system(f"git checkout {branch}")
         os.system("git pull")
         os.chdir("/app")
-        os.system("docker-compose -f billing/docker-compose.yml down")
-        os.system("docker-compose -f weight/docker-compose.yml down")
+
+        #defining port for each branch
+        #--------------bring  down the previous version and bring up the test version with the changes------
+        os.system("docker-compose -f billing/docker-compose.yml --project-name \"stable_Billing\" down") 
+        os.system("docker-compose -f weight/docker-compose.yml --project-name \"stable_Weight\" down")
         os.system("docker-compose -f billing/docker-compose.yml up -d --build")
         os.system("docker-compose -f weight/docker-compose.yml up -d --build")
-        if testing_sendMailReport(branch,commiter):
+        #------------test it and bring down the test version--------------------------------
+        test_result= testing_sendMailReport(branch,commiter)
+        os.system("docker-compose -f billing/docker-compose.yml down") 
+        os.system("docker-compose -f weight/docker-compose.yml  down")
+        #if test pass , build and bring up the new version with the changes and set it as stable<feature>-----------
+        if test_result:
+            os.system("docker-compose -f billing/docker-compose.yml --project-name \"stable_Billing\" up -d --build")
+            os.system("docker-compose -f weight/docker-compose.yml --project-name \"stable_Weight\" up -d --build")
             print("success test, push and report :)")
+        #if test not pass , bring up the old version -----------
         else:
+            os.system("docker-compose -f billing/docker-compose.yml --project-name \"stable_Billing\" up -d ")
+            os.system("docker-compose -f weight/docker-compose.yml --project-name \"stable_Weight\" up -d ")
+            #cancel the push theorithical 
             print("failure to test,don't push and report :(")
 
 
@@ -62,7 +76,7 @@ def testing_sendMailReport(branch,commiter):
     weightResult=subprocess.check_output(['python3', './weight/test.py']).decode("utf-8").strip() 
     os.chdir("/app")
     try:
-        os.system(f"python3 /app/test/test.py {commiter} {billingResult} {weightResult}")
+        os.system(f"python3 /app/test/test.py {commiter} {billingResult} {weightResult} {branch}")
     except:
         print("failure to send mail")  
 
