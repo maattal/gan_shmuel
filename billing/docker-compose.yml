@@ -10,14 +10,12 @@ services:
     volumes:
       - ./one-db.sql:/docker-entrypoint-initdb.d/one-db.sql
       - wdata:/var/lib/mysql/:rw
+      # - ${TEAM_PATH}:/weight
     networks:
       - bridge
 
-
   web:
     build: ./app 
-    volumes:
-      - ./app/in:/app/in
     ports:
       - "8081:5000"
     depends_on:
@@ -35,4 +33,3 @@ volumes:
 networks:
   blue_net: 
   bridge:
-
