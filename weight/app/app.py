@@ -37,9 +37,9 @@ def get_health():
         mycursor.execute("show tables")
         res = str(mycursor.fetchall())
     except:
-        return "failed connecting to the database", 500
+        return "failed", 500
     else:
-        return "WELCOME DATA CONNECTION WORKS" ,200
+        return "connection-ok" ,200
 
 #posts weights of new containers, reads from a given(csv/json) file
 @app.route('/batch-weight',methods = ['POST'])
@@ -199,7 +199,7 @@ def post_weight():
     truck_weight=truck_weight[0]["weight"] if truck_weight else '' #truck weight
     
     #conditions
-    if last_direction == direction and force == 'False': #force=False, directions equal. no need to overwrite.
+    if last_direction == direction and force == 'False': #force=False, directions are equal. no need to overwrite.
         return f"Error direction for truck {truck_id}"
     
     elif last_direction == direction and force == 'True' : #force=True, overwrite.
@@ -215,8 +215,11 @@ def post_weight():
     elif direction == 'out':
         if last_direction != 'in': #current direction is 'out'. option1: last direction is not 'in' -> error.
             return f"Error direction for truck {truck_id}"
-        #option2: last direction is 'in'.    
-        neto=float(weight)-float(container_weight)-float(truck_weight) # neto
+        #option2: last direction is 'in'. 
+        cursor.execute(f'SELECT bruto FROM sessions WHERE trucks_id={truck_id} AND direction="in" ORDER BY date desc limit 1')
+        ans = cursor.fetchall()
+        bruto = ans[0]["bruto"]# bruto from 'in' session  
+        neto=float(bruto)-float(container_weight)-float(truck_weight) # neto
         cursor.execute(f'UPDATE sessions SET neto={neto} WHERE trucks_id={truck_id} AND direction="in" ORDER BY date desc limit 1 ')
         conn.commit()
         cursor.execute(f'SELECT id FROM sessions WHERE trucks_id={truck_id} AND direction="in" ORDER BY date desc limit 1')
