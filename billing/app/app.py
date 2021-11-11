@@ -53,7 +53,7 @@ def update_name(id):
         mycursor.execute(query)
         conn.commit()
     except:
-        return "Name already exists", 500
+        return "Name already exists"
     else:   
         return "OK"
        
@@ -67,7 +67,7 @@ def creat_provider():
         mycursor.execute(query)
         conn.commit()
     except:
-        return "Name already exists", 500    
+        return "Name already exists"   
     else:
         mycursor.execute(f"SELECT * FROM providers WHERE providername = '{pro_name}';")
         rows = mycursor.fetchmany(size=1)
@@ -106,7 +106,7 @@ def download_file():
     try:
         return send_from_directory(upload_folder, xlfile, as_attachment=True)
     except:
-        return 500
+        return
 
 @app.route('/truck',methods = ['POST'])
 def creat_truck():
@@ -120,7 +120,7 @@ def creat_truck():
         conn.commit()
         return 'ok'
     except:
-        return "ProviderID not Found", 500
+        return "ProviderID not Found"
 
 
 @app.route('/truck/<id>', methods=['GET'])
@@ -173,12 +173,12 @@ def update_truckprovider(id):
         new_id = request.args.get('providerid')
         conn = init_db()
         mycursor = conn.cursor()
-        query = (f"UPDATE trucks SET providerid = '{new_id}' WHERE truck_id = '{id}'")
+        query = (f"UPDATE trucks SET providerid = '{new_id}' WHERE truckid = '{id}'")
         mycursor.execute(query)
         conn.commit()
         return "OK"
     except:
-        return "Invalid input", 500
+        return "Invalid input"
 
 
 if __name__ == '__main__':
