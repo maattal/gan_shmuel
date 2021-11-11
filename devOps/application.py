@@ -45,7 +45,18 @@ def down_up(branch,commiter):
         os.system(f"git checkout {branch}")
         os.system("git pull")
         os.chdir("/app")
-
+        
+        if branch == 'staging':
+            with open(f"{os.getcwd()}/billing/.env", 'w') as f:
+                f.write(f"PORT = 8081")
+            with open(f"{os.getcwd()}/weight/.env", 'w') as f:
+                f.write(f"PORT = 8082")
+        if branch == 'main':
+            with open(f"{os.getcwd()}/billing/.env", 'w') as f:
+                f.write(f"PORT = 8086")
+            with open(f"{os.getcwd()}/weight/.env", 'w') as f:
+                f.write(f"PORT = 8080")
+    
         #defining port for each branch
         #--------------bring  down the previous version and bring up the test version with the changes------
         os.system("docker-compose -f billing/docker-compose.yml --project-name \"stable_Billing\" down") 
