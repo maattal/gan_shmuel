@@ -1,10 +1,13 @@
 from flask import Flask,request, jsonify , send_from_directory ,send_file
 import os,sys,json
+from flask.globals import session
 import mysql.connector
 from datetime import datetime
 from openpyxl import  load_workbook
 import openpyxl as xl
 
+import requests
+from mockAPI import mocked_json, mocked_sessions
 
 
 
@@ -23,6 +26,19 @@ def init_db():
 
 
 
+@app.route('/',methods = ['GET'])
+def index():
+    # return 'ko'
+    connect = init_db()  
+    cur = connect.cursor()  
+    cur.execute("SHOW TABLES;")
+    rows = cur.fetchall()
+    resp = jsonify(rows)
+    resp.status_code = 200
+    return resp
+    # connect.close()
+
+#11111111111111111111111111111111111111
 @app.route('/health',methods = ['GET'])
 def health():
     try:
@@ -35,17 +51,27 @@ def health():
     else:
         return "WELCOME DATA CONNECTION WORKS" ,200
 
-@app.route('/',methods = ['GET'])
-def index():
-    # return 'ko'
-    connect = init_db()  
-    cur = connect.cursor()  
-    cur.execute("SHOW TABLES;")
-    rows = cur.fetchall()
-    resp = jsonify(rows)
-    resp.status_code = 200
-    return resp
-    # connect.close()
+#2222222222222222222222222222222222222
+@app.route('/provider',methods = ['POST'])
+def creat_provider():
+    try:
+        pro_name=request.args.get('name')
+        conn = init_db()
+        mycursor = conn.cursor()
+        query = (f"INSERT INTO providers (providername) VALUES ('{pro_name}')")
+        mycursor.execute(query)
+        conn.commit()
+    except:
+        return "Name already exists"
+    else:
+        mycursor.execute(f"SELECT * FROM providers WHERE providername = '{pro_name}';")
+        rows = mycursor.fetchmany(size=1)
+        resp = jsonify(rows)
+        resp.status_code = 200
+        return resp
+
+
+
 
 
 
@@ -59,28 +85,13 @@ def update_name(id):
         mycursor.execute(query)
         conn.commit()
     except:
-        return "Name already exists"
+        return "Name already exists", 500
     else:   
-        return "OK"
+        return "OK", 200
        
 
-@app.route('/provider',methods = ['POST'])
-def creat_provider():
-    try:
-        pro_name=request.args.get('name')
-        conn = init_db()
-        mycursor = conn.cursor()
-        query = (f"INSERT INTO providers (providername) VALUES ('{pro_name}')")
-        mycursor.execute(query)
-        conn.commit()
-    except:
-        return "Name already exists"    
-    else:
-        mycursor.execute(f"SELECT * FROM providers WHERE providername = '{pro_name}';")
-        rows = mycursor.fetchmany(size=1)
-        resp = jsonify(rows)
-        resp.status_code = 200
-        return resp
+
+
 
 
 
@@ -107,7 +118,10 @@ def upload_xl_data():
         cur.execute(query,values)
 
     connect.commit()
-    return "a"
+    return "a" ,200
+
+
+
 
 
 @app.route("/rates",methods=['GET'])
@@ -121,11 +135,6 @@ def creat_truck():
         pro_id=request.args.get('providerid')
         pro_lic=request.args.get('truckid')
         conn = init_db()
-        mycursor = conn.cursor()
-        query = (f"INSERT INTO trucks (truckid,providerid) VALUES ('{pro_lic}','{pro_id}')")
-        mycursor.execute(query)
-        conn.commit()
-        return 'ok'
     except:
         return "ProviderID not Found"
 
@@ -186,6 +195,132 @@ def update_truckprovider(id):
         return "OK"
     except:
         return "Invalid input"
+
+        
+@app.route("/weight" , methods=['GET'])
+def get_weight():
+    connect = init_db()
+    cur = connect.cursor(dictionary=True, buffered=True)
+    fromTime = request.args.get('from') if request.args.get('from') else datetime.now().strftime("%Y%m%d000000")
+    toTime = request.args.get('to') if request.args.get('to') else datetime.now().strftime("%Y%m%d%H%M%S")
+    filter = f"('{request.args.get('filter')}')" if request.args.get('filter') else "('in' , 'out' , 'none')" 
+     
+    query="""SELECT t1.id, direction, bruto, neto, product_name, GROUP_CONCAT(t3.containers_id) as containers 
+    FROM sessions AS t1 JOIN products AS t2 ON t1.products_id = t2.id 
+    JOIN containers_has_sessions as t3 ON t1.id = t3.sessions_id 
+    WHERE t1.date BETWEEN '{0}' AND '{1}' AND direction IN {2} GROUP BY t3.sessions_id"""
+    cur.execute(query.format(fromTime, toTime, filter))
+    rows = cur.fetchall()
+    return jsonify(rows)
+
+#888888888888888888888888888888888888888888888
+
+@app.route('/bill/<id>', methods=['GET'])
+def billId(id):
+    now = datetime.now()
+    time = now.strftime("%Y%m")
+    test_id = id
+    _from = request.args.get('from')
+    _to = request.args.get('to')
+    if not _to:
+        _to = now.strftime("%Y%m%d%H%M%S")
+        # _to=11111111111111
+    if not _from:
+        _from = time + '01000000'
+        # _from=88888888888888
+    conn = init_db()
+    cursor = conn.cursor() 
+    cursor.execute(f'SELECT providername FROM providers WHERE id = "{id}"')
+    n=cursor.fetchall()
+    cursor.execute(f'SELECT id FROM trucks WHERE providerid = "{id}"')
+    trucks=cursor.fetchall()
+
+
+    sessionCount=0      
+    getTrucks_list=[]
+    session_list=[]
+   
+    for i in trucks:
+        getTrucks_list.append(json.loads(mocked_json))
+        
+        # getTrucks_list.append(json.loads(requests.get('http://localhost:5000/truck/77777?from=11111111111111&to=88888888888888')))
+    # return jsonify(getTrucks_list)                           
+        
+                                                       
+    for dic in getTrucks_list:
+        sessionCount += len(dic["sessions"])
+        for i in dic["sessions"]:
+            session_list.append(i)
+        
+    # return jsonify(session_list)
+
+    session_response=[]
+    neto_produce_list=[]
+    for session in session_list:
+        # session_response.append(json.loads(requests.get(url=('http://localhost:5000/weight?from=11111111111111&to=88888888888888&filter=out'))))
+        session_response.append(json.loads(mocked_sessions))
+        # return (jsonify(session_response))
+    
+        for data in session_response:
+            neto_produce_list.append({"neto":data["neto"],"produce":data["produce"]})
+    
+    # return jsonify(neto_produce_list)
+
+    cursor.execute('select id from products')
+    product_name=cursor.fetchall()    
+    products=[]
+    # return jsonify(product_name)
+
+    for name in product_name:
+        count=0
+        amount=0
+        for d in neto_produce_list:
+            if name[0] == d["produce"]:
+                count +=1
+                amount += d["neto"]
+        products.append({"product":name[0],"count":count,"amount":amount,"pay":0,"rates":0})
+        
+    cursor.execute('select id,rate,scope from products')
+    rates_list=cursor.fetchall()
+    # return jsonify(rates_list)
+    total=0
+
+
+    for dict in products:
+      for row in rates_list:
+        # if row[0] == dict["product"] and row[2] == 'All':
+            dict["rates"]=row[1]
+            dict["pay"]=dict["rates"] * dict ["amount"]
+            total += dict["pay"]
+        # elif row[0] == dict["product"] and row[2] == n[0][0]:
+        #     dict["rates"]=row[1]
+        #     dict["pay"]=dict["rates"] * dict ["amount"]
+        #     total += dict["pay"]
+            
+    provider = { 
+        "id": int(id),
+        "name": n[0][0],
+        "from": _from,
+        "to": _to,
+        "truckCount":len(trucks),
+        "sessionCount":sessionCount,
+        "products": products,
+        "Total": total,
+        }  
+
+
+
+
+
+    conn.commit() 
+
+    resp = jsonify(provider)
+    resp.status_code = 200
+    return resp
+
+
+
+
 
 
 
