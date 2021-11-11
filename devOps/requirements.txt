@@ -1,0 +1,6 @@
+Flask == 1.1.1
+github_webhook>=1.0.4
+requests
+yagmail
+pytest
+pytest-html

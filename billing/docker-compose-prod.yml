@@ -1,0 +1,25 @@
+version: "3.0"
+
+services:
+  db:
+    build: .
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306"
+    volumes:
+      # - ./db:/var/lib/mysql
+      #- ./one-db.sql:/docker-entrypoint-initdb.d/one-db.sql
+      - wdata:/var/lib/mysql/:rw
+      # - ${TEAM_PATH}:/weight
+
+
+  web:
+    build: ./app 
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+   
+volumes:
+  wdata:      
