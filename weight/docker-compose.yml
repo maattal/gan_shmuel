@@ -7,7 +7,7 @@ services:
     ports:
       - "8084:3306"
     volumes:
-      # - ./one-db.sql:/docker-entrypoint-initdb.d/one-db.sql
+       - ./one-db.sql:/docker-entrypoint-initdb.d/one-db.sql
       - wdata:/var/lib/mysql/:rw
     networks:
       - bridge
